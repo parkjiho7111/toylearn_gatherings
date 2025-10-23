@@ -1,0 +1,1187 @@
+{
+  "name": "review_06_storage_Googlesheets",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "기사요약",
+        "formDescription": "기사요약을 AI로 합니다.\n대상자에게 메일을 발송합니다.\n",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "URI",
+              "placeholder": "기사주소입력",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -1536,
+        -576
+      ],
+      "id": "e1a189a0-b54b-403c-a809-7c018051d403",
+      "name": "On form submission",
+      "webhookId": "5895f3d7-cf47-4acc-8900-e9b5786efa1a"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.URI }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        -576
+      ],
+      "id": "4d97d70a-ad48-4196-8040-2a527ac03d13",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f49905e-bb43-495a-9112-807e6ed16dd8",
+              "name": "date",
+              "value": "={{ $('On form submission').item.json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "ce4b24ec-5435-4288-b756-3c36daec92a0",
+              "name": "URI",
+              "value": "={{ $('On form submission').item.json.URI }}",
+              "type": "string"
+            },
+            {
+              "id": "4ff09baf-e28a-4e5a-ad7f-2191fec57995",
+              "name": "key_value",
+              "value": "={{ $('On form submission').item.json.submittedAt }}{{ $('On form submission').item.json.URI }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1008,
+        -576
+      ],
+      "id": "f4e2850c-f33a-4504-9b30-c05ef05f8fb1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1QWRVeC8UsXrF4OGpyj7-JDZTe5eBBKVNerK7gXnQJ60/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QWRVeC8UsXrF4OGpyj7-JDZTe5eBBKVNerK7gXnQJ60/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key_value": "={{ $json.key_value }}",
+            "URI": "={{ $json.URI }}",
+            "date": "={{ $json.date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URI",
+              "displayName": "URI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "key_value",
+              "displayName": "key_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기사요약",
+              "displayName": "기사요약",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "한줄평",
+              "displayName": "한줄평",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "대량발송여부",
+              "displayName": "대량발송여부",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -736,
+        -576
+      ],
+      "id": "5a30cd68-3269-4ab2-8909-9abd91a95112",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "adRD1SfY7OQ4VCrr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=너는 정리의 신이야.\n 정리 대상 기사를 읽고 정리해줘\n형식을 지켜줘\n  - 전체 응답은 반드시 유효한 JSON 객체여야 한다.\n  - 어떠한 설명이나 인사말, ```json 같은 마크다운 코드 블록 없이, 응답은 반드시 { 로 시작해서 `}` 로 끝나야 한다.\n\n[정리 대상 기사]\n{{ $('HTTP Request').item.json.data }}\n**[출력 예시 구조 - JSON]**\n{\n  \"기사 제목\": TEXT,\n  \"100자내외 요약\": TEXT,\n  \"한줄평\": TEXT\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        -336
+      ],
+      "id": "b65c5dab-2ec0-4e8c-8e93-606d7239199f",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "icxRUX7oXngRdUdc",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9f75a09-2696-4ec2-ab94-63ca46d2abbe",
+              "name": "text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1008,
+        -336
+      ],
+      "id": "921b0d07-5630-4098-9ba5-9615e7c67cb9",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1QWRVeC8UsXrF4OGpyj7-JDZTe5eBBKVNerK7gXnQJ60/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QWRVeC8UsXrF4OGpyj7-JDZTe5eBBKVNerK7gXnQJ60/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "기사요약": "={{ $json.text[\"100자내외 요약\"] }}",
+            "한줄평": "={{ $json.text[\"한줄평\"] }}",
+            "key_value": "={{ $('Edit Fields').item.json.key_value }}"
+          },
+          "matchingColumns": [
+            "key_value"
+          ],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URI",
+              "displayName": "URI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "key_value",
+              "displayName": "key_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기사요약",
+              "displayName": "기사요약",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "한줄평",
+              "displayName": "한줄평",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "대량발송여부",
+              "displayName": "대량발송여부",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -736,
+        -336
+      ],
+      "id": "1ff971c1-8286-4d09-bb50-f5a34648f322",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "adRD1SfY7OQ4VCrr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/15PSi6M5ssF-wcTMlC5ifEzl42g7iFld8CxvGtQasJdI/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15PSi6M5ssF-wcTMlC5ifEzl42g7iFld8CxvGtQasJdI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1344,
+        -128
+      ],
+      "id": "5284a496-dcf6-44a6-a37a-49bfab6f51ad",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "adRD1SfY7OQ4VCrr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "google Email"
+            },
+            {
+              "fieldToAggregate": "이름"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        -128
+      ],
+      "id": "8bff71a8-dbb3-4baf-8c4a-ed7181328873",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"google Email\"].join(\",\") }}\n",
+        "subject": "테스트]n8n 컬럼 테스트",
+        "message": "=[테스트] n8n 컬럼테스트",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -752,
+        -128
+      ],
+      "id": "381d7fe4-2f0e-4eb1-9763-1d063923ffc4",
+      "name": "Send a message",
+      "webhookId": "27197540-eb3a-4816-879c-0c6473e6b86b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XCe4yhOvym7phQbw",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1QWRVeC8UsXrF4OGpyj7-JDZTe5eBBKVNerK7gXnQJ60/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QWRVeC8UsXrF4OGpyj7-JDZTe5eBBKVNerK7gXnQJ60/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "대량발송여부": "={{ $('Aggregate').item.json[\"google Email\"].join(\", \") }}",
+            "key_value": "={{ $('Update row in sheet').item.json.key_value }}"
+          },
+          "matchingColumns": [
+            "key_value"
+          ],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "URI",
+              "displayName": "URI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "key_value",
+              "displayName": "key_value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "기사요약",
+              "displayName": "기사요약",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "한줄평",
+              "displayName": "한줄평",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "대량발송여부",
+              "displayName": "대량발송여부",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -432,
+        -128
+      ],
+      "id": "657d28da-7a33-4df1-acf1-d4f641f112c4",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "adRD1SfY7OQ4VCrr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "",
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        -608
+      ],
+      "id": "d30b9a07-6574-4bb8-92cf-afdc79e0de30",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "width": 832,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -368
+      ],
+      "id": "aac4b799-1d2c-4e41-95f2-79b26a1b2229",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "width": 1072,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -144
+      ],
+      "id": "e8b3b00e-0340-4cfc-8454-b2702d598621",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "URI": "https://m.sports.naver.com/wfootball/article/410/0001095217",
+          "submittedAt": "2025-10-22T15:54:33.459+09:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "HTTP Request": [
+      {
+        "json": {
+          "data": "<!DOCTYPE html><html lang=\"ko\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/d587d1c112526568-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/d83e92f0af8b17e4-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/e52907b750a6f61e-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/eb9adf802b0a60eb-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/ed42d1b51efd45f6-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/fba9d678ff638e59-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/fbaa11b0ea175105-s.p.woff2\" as=\"font\" crossorigin=\"\" type=\"font/woff2\"/><link rel=\"preload\" as=\"image\" href=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg?type=w647\" fetchPriority=\"high\"/><link rel=\"preload\" as=\"image\" href=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_002_20251022064018793.jpg?type=w647\" fetchPriority=\"high\"/><link rel=\"stylesheet\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/568268dc22ce8f66.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/510da1bf1712cd44.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/c4a06dc7bdf98075.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4ce6adf7cd9eeda9.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/b3eea54ef3a11c7f.css\" data-precedence=\"next\"/><link rel=\"stylesheet\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4dd2b5709f0b5ec6.css\" data-precedence=\"next\"/><link rel=\"preload\" as=\"script\" fetchPriority=\"low\" href=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/webpack-921f7787d4e2f753.js\"/><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/fee2edce-6514385c40ff1b2b.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/8765-5ffb9fb2bb6cb867.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/main-app-2cfdcb006e89cd36.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/20f0ddde-e65d15ca91772aad.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/200-fb44f19e6bdd305e.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/3997-d44b97f474982781.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/%5Bsection%5D/layout-045fa6bf8043800c.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/6919-52adb2537c9d9540.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/%5Bsection%5D/loading-fd5c16699d6c8d84.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/6154-d1f650461ddbf7fc.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/5251-368847b84a9bdc48.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/layout-c9fc67ef8e8662e5.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/error-212a8799765be5f8.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/not-found-cd6648d41e6d7618.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/global-error-7715a2e2a3ec87d5.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/1127-7e1b3a8c46d77262.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/3203-c1b38c3909505e6f.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/8225-241afa73672998eb.js\" async=\"\"></script><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/app/%5Bsection%5D/article/%5Boid%5D/%5Baid%5D/page-3858c7c475699c9d.js\" async=\"\"></script><link rel=\"preload\" href=\"https://ssl.pstatic.net/tveta/libs/glad/prod/gfp-core.js\" as=\"script\"/><link rel=\"preload\" href=\"https://ssl.pstatic.net/static.sports/resources/sports-web/lib/articleLog/logLib.js\" as=\"script\"/><title>‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]</title><link rel=\"manifest\" href=\"/manifest.json\" crossorigin=\"use-credentials\"/><meta name=\"napp-site-analysis\" content=\"gdid=88127054_000000000000000001095217,service=sports,collection=news,section=107\"/><meta property=\"og:title\" content=\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\"/><meta property=\"og:image\" content=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\"/><meta property=\"og:image:path\" content=\"410/2025/10/22\"/><meta property=\"og:image:name\" content=\"0001095217_001_20251022064018740.jpg\"/><meta property=\"og:image:size\" content=\"379432\"/><meta property=\"og:image:width\" content=\"640\"/><meta property=\"og:image:height\" content=\"960\"/><meta property=\"og:image:caption\" content=\" ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스\"/><meta property=\"og:type\" content=\"article\"/><meta name=\"twitter:card\" content=\"summary_large_image\"/><meta name=\"twitter:title\" content=\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\"/><meta name=\"twitter:image\" content=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\"/><meta name=\"twitter:image:path\" content=\"410/2025/10/22\"/><meta name=\"twitter:image:name\" content=\"0001095217_001_20251022064018740.jpg\"/><meta name=\"twitter:image:size\" content=\"379432\"/><meta name=\"twitter:image:width\" content=\"640\"/><meta name=\"twitter:image:height\" content=\"960\"/><meta name=\"twitter:image:caption\" content=\" ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스\"/><link rel=\"shortcut icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_32.png\" sizes=\"32x32\" type=\"image/png\"/><link rel=\"icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_32.png\" sizes=\"32x32\" type=\"image/png\"/><link rel=\"apple-touch-icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_57.png\" sizes=\"57x57\" type=\"image/png\"/><link rel=\"apple-touch-icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_76.png\" sizes=\"76x76\" type=\"image/png\"/><link rel=\"apple-touch-icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_120.png\" sizes=\"120x120\" type=\"image/png\"/><link rel=\"apple-touch-icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_152.png\" sizes=\"152x152\" type=\"image/png\"/><link rel=\"apple-touch-icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_167.png\" sizes=\"167x167\" type=\"image/png\"/><link rel=\"apple-touch-icon\" href=\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_180.png\" sizes=\"180x180\" type=\"image/png\"/><meta name=\"next-size-adjust\"/><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/polyfills-42372ed130431b0a.js\" noModule=\"\"></script></head><body class=\"NEWS __variable_e031cd __variable_aac044\"><script>\n        const ua = navigator.appVersion;\n        const naverAppInfo = ua.match(/NAVER\\((\\S+);\\s(\\S+);\\s(\\S+);\\s(\\S+)(?:;\\s(\\S+))?\\)/);\n        const darkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;\n        const recentNaverAppWithDarkTheme = naverAppInfo !== null && Number(naverAppInfo[3]) >= 1000 && darkTheme;\n        \n        // 오픈톡 작업하면서 중계설정화면이 iframe으로 그려질때, 상단(네오챗 영역)과 iframe영역과 다크모드 상태를 맞추기 위해 url params을 참조함.\n        const webWithDarkTheme = window.location.search.indexOf('NSCS=0') < 0 && document.cookie.includes('NSCS=1') && darkTheme;\n        \n        const isDarkMode = recentNaverAppWithDarkTheme || webWithDarkTheme;\n        isDarkMode && document.documentElement.classList.add('DARK_THEME');\n      </script><script>\n      const cookies = document.cookie.split('; ');\n      const cookie = cookies.find(c => c.trim().startsWith('NFS='));\n\n      if (cookie) {\n        const [, value] = cookie.trim().split('=');\n        document.body.classList.add('type_font_size' + (value ?? 2));\n      } else {\n        document.body.classList.add('type_font_size' + 2);\n      }\n    </script><script>\n          const section = window.location.pathname.split('/').slice(1).at(0);\n          document.body.classList.add(section.toUpperCase());\n        </script><main><!--$--><header class=\"_sports_header_hreie_1256 _type_responsive_hreie_37\"><div class=\"_sports_gnb_hreie_1\"><h1 class=\"_logo_area_hreie_27\"><a class=\"_link_naver_hreie_32\" href=\"https://m.naver.com\"><svg fill=\"none\" width=\"26\" height=\"26\" viewBox=\"0 0 26 26\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"logo_naver\"><path fill=\"currentColor\" d=\"M25.42.5H0v25.42h25.42V.5z\"></path><path fill=\"#fff\" d=\"M14.744 13.61l-4.235-6.061H7v11.323h3.678V12.81l4.234 6.06h3.51V7.55h-3.677v6.06z\"></path></svg><span class=\"blind\">NAVER</span></a><a class=\"_link_sports_hreie_43\" href=\"https://sports.news.naver.com/index\"><svg fill=\"none\" width=\"53\" height=\"17\" viewBox=\"0 0 53 17\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"_logo_sports_hreie_52\"><path fill=\"currentColor\" d=\"M38.319 12.012L37.24 9.857c4.216-1.74 6.107-3.516 6.296-5.123h-5.218V2.54h5.236V.555h2.402V2.54h5.123v2.194h-5.123a5.213 5.213 0 01-.397 1.663l6.579 3.517-1.191 2.098-6.712-3.648c-1.229 1.304-3.176 2.552-5.917 3.648zm-1.948 4.784v-2.194H53.01v2.194H36.37zm-8.312-5.464v3.27h7.108v2.213H18.53v-2.213h7.109v-3.27h-5.445V9.158h2.647V3.656h-2.647V1.482h13.329v2.174h-2.647v5.502h2.647v2.174h-5.464zm.472-7.676h-3.346v5.502h3.346V3.656zm-13.228 7.808l-6.655-4.33c-1.248 1.57-3.233 3.026-6.144 4.33l-1.116-2.08c4.784-2.23 6.504-4.48 6.504-6.862V1.198h2.42v1.324c0 .888-.151 1.739-.473 2.57l6.788 4.368-1.324 2.004zM.69 16.814v-2.211h16.637v2.212H.69z\"></path></svg><span class=\"blind\">스포츠</span></a></h1><div class=\"_tool_area_hreie_628\"><button aria-expanded=\"false\" aria-haspopup=\"dialog\" class=\"_button_menu_hreie_797\" type=\"button\"><svg width=\"30\" height=\"30\" viewBox=\"0 0 30 30\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"_icon_menu_hreie_820\"><path d=\"M6 7.9C6 7.40294 6.40294 7 6.9 7H23.1C23.5971 7 24 7.40294 24 7.9C24 8.39706 23.5971 8.8 23.1 8.8H6.9C6.40294 8.8 6 8.39706 6 7.9Z\" fill=\"currentColor\"></path><path d=\"M6 14.9C6 14.4029 6.40294 14 6.9 14H23.1C23.5971 14 24 14.4029 24 14.9C24 15.3971 23.5971 15.8 23.1 15.8H6.9C6.40294 15.8 6 15.3971 6 14.9Z\" fill=\"currentColor\"></path><rect x=\"6\" y=\"21\" width=\"18\" height=\"1.8\" rx=\"0.9\" fill=\"currentColor\"></rect></svg><span class=\"blind\">메뉴</span></button></div></div><nav class=\"_sports_lnb_hreie_319\"><ul class=\"_lnb_list_hreie_365\"><li class=\"lnb_item\" data-section-id=\"shome\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/index\"><span class=\"_menu_hreie_408\">홈</span></a></li><li class=\"lnb_item\" data-section-id=\"kbaseball\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/kbaseball/index\"><span class=\"_menu_hreie_408\">야구</span></a></li><li class=\"lnb_item\" data-section-id=\"wbaseball\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/wbaseball/index\"><span class=\"_menu_hreie_408\">해외야구</span></a></li><li class=\"lnb_item\" data-section-id=\"kfootball\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/kfootball/index\"><span class=\"_menu_hreie_408\">축구</span></a></li><li class=\"lnb_item\" data-section-id=\"wfootball\"><a aria-current=\"true\" class=\"_link_lnb_hreie_393\" href=\"/wfootball/index\"><span class=\"_menu_hreie_408\">해외축구</span></a></li><li class=\"lnb_item\" data-section-id=\"basketball\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/basketball/index\"><span class=\"_menu_hreie_408\">농구</span></a></li><li class=\"lnb_item\" data-section-id=\"volleyball\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/volleyball/index\"><span class=\"_menu_hreie_408\">배구</span></a></li><li class=\"lnb_item\" data-section-id=\"golf\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/golf/index\"><span class=\"_menu_hreie_408\">N골프</span></a></li><li class=\"lnb_item\" data-section-id=\"general\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/general/index\"><span class=\"_menu_hreie_408\">체전・일반</span></a></li><li class=\"lnb_item\"><a class=\"_link_lnb_hreie_393\" href=\"https://game.naver.com/esports\"><span class=\"_menu_hreie_408\">e스포츠</span></a></li><li class=\"lnb_item\"><a aria-current=\"false\" class=\"_link_lnb_hreie_393\" href=\"/outdoor/index\"><span class=\"_menu_hreie_408\">아웃도어</span><span class=\"_new_hreie_427\"><span class=\"blind\">NEW</span></span></a></li></ul></nav><nav class=\"_sports_lnb_sub_hreie_478\" id=\"sports_lnb_sub\"><ul class=\"_lnb_sub_list_hreie_526\"><li class=\"_lnb_sub_item_hreie_552\" data-menu-id=\"news\"><a aria-current=\"page\" class=\"_link_lnb_sub_hreie_552\" href=\"/wfootball/news/index\"><span class=\"_menu_hreie_408\">뉴스</span></a></li><li class=\"_lnb_sub_item_hreie_552\" data-menu-id=\"video\"><a class=\"_link_lnb_sub_hreie_552\" href=\"/wfootball/video\"><span class=\"_menu_hreie_408\">영상</span></a></li><li class=\"_lnb_sub_item_hreie_552\" data-menu-id=\"schedule\"><a class=\"_link_lnb_sub_hreie_552\" href=\"/wfootball/schedule/index\"><span class=\"_menu_hreie_408\">일정</span></a></li><li class=\"_lnb_sub_item_hreie_552\" data-menu-id=\"record\"><a class=\"_link_lnb_sub_hreie_552\" href=\"/wfootball/record/epl\"><span class=\"_menu_hreie_408\">순위</span></a></li><li class=\"_lnb_sub_item_hreie_552\" data-menu-id=\"photo\"><a class=\"_link_lnb_sub_hreie_552\" href=\"/wfootball/photo\"><span class=\"_menu_hreie_408\">포토</span></a></li></ul></nav></header><aside class=\"_extension_hreie_832 _type_responsive_hreie_37\" role=\"dialog\"><svg width=\"13\" height=\"7\" viewBox=\"0 0 13 7\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"_icon_edge_hreie_881\"><mask id=\"path-1-outside-1_2472_76072\" maskUnits=\"userSpaceOnUse\" x=\"-2\" y=\"-0.000976562\" width=\"17\" height=\"9\" fill=\"black\"><rect fill=\"white\" x=\"-2\" y=\"-0.000976562\" width=\"17\" height=\"9\"></rect><path d=\"M5.71368 1.3812C6.11406 0.87163 6.88594 0.871631 7.28632 1.3812L12 7.38043H1L5.71368 1.3812Z\"></path></mask><path d=\"M5.71368 1.3812C6.11406 0.87163 6.88594 0.871631 7.28632 1.3812L12 7.38043H1L5.71368 1.3812Z\" fill=\"white\"></path><path d=\"M12 7.38043V8.38043H14.0575L12.7863 6.76261L12 7.38043ZM1 7.38043L0.213682 6.76261L-1.05746 8.38043H1V7.38043ZM7.28632 1.3812L6.5 1.99902L7.28632 1.3812ZM5.71368 1.3812L6.5 1.99902L5.71368 1.3812ZM6.5 1.99902L11.2137 7.99825L12.7863 6.76261L8.07264 0.763381L6.5 1.99902ZM12 6.38043H1V8.38043H12V6.38043ZM1.78632 7.99825L6.5 1.99902L4.92736 0.76338L0.213682 6.76261L1.78632 7.99825ZM8.07264 0.763381C7.27188 -0.255761 5.72812 -0.255763 4.92736 0.76338L6.5 1.99902L6.5 1.99902L8.07264 0.763381Z\" fill=\"#DADAE5\" mask=\"url(#path-1-outside-1_2472_76072)\"></path></svg><div class=\"_slide_area_hreie_939\"><nav class=\"_service_links_hreie_963\"><strong class=\"blind\">홈 바로가기</strong><a class=\"_link_naver_hreie_32\" href=\"https://m.naver.com\"><svg fill=\"none\" width=\"26\" height=\"26\" viewBox=\"0 0 26 26\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"logo_naver\"><path fill=\"currentColor\" d=\"M25.42.5H0v25.42h25.42V.5z\"></path><path fill=\"#fff\" d=\"M14.744 13.61l-4.235-6.061H7v11.323h3.678V12.81l4.234 6.06h3.51V7.55h-3.677v6.06z\"></path></svg><span class=\"blind\">NAVER</span></a><a class=\"_link_sports_hreie_43\" href=\"/index\"><svg fill=\"none\" width=\"53\" height=\"17\" viewBox=\"0 0 53 17\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"_logo_sports_hreie_52\"><path fill=\"currentColor\" d=\"M38.319 12.012L37.24 9.857c4.216-1.74 6.107-3.516 6.296-5.123h-5.218V2.54h5.236V.555h2.402V2.54h5.123v2.194h-5.123a5.213 5.213 0 01-.397 1.663l6.579 3.517-1.191 2.098-6.712-3.648c-1.229 1.304-3.176 2.552-5.917 3.648zm-1.948 4.784v-2.194H53.01v2.194H36.37zm-8.312-5.464v3.27h7.108v2.213H18.53v-2.213h7.109v-3.27h-5.445V9.158h2.647V3.656h-2.647V1.482h13.329v2.174h-2.647v5.502h2.647v2.174h-5.464zm.472-7.676h-3.346v5.502h3.346V3.656zm-13.228 7.808l-6.655-4.33c-1.248 1.57-3.233 3.026-6.144 4.33l-1.116-2.08c4.784-2.23 6.504-4.48 6.504-6.862V1.198h2.42v1.324c0 .888-.151 1.739-.473 2.57l6.788 4.368-1.324 2.004zM.69 16.814v-2.211h16.637v2.212H.69z\"></path></svg><span class=\"blind\">스포츠</span></a></nav><nav class=\"_myteam_links_hreie_972 _is_start_hreie_992\"><strong class=\"_title_hreie_1011\">마이팀</strong><div class=\"_scroller_hreie_995\"><a class=\"_link_hreie_32 _type_add_hreie_1044\" href=\"/myteam/index\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"_icon_add_hreie_1050\"><path d=\"M6 1C6 0.447716 6.44772 0 7 0C7.55228 0 8 0.447715 8 1V13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13V1Z M13 6C13.5523 6 14 6.44772 14 7C14 7.55229 13.5523 8 13 8L1 8C0.447716 8 -6.78525e-08 7.55228 -4.37114e-08 7C-1.95703e-08 6.44771 0.447716 6 1 6L13 6Z\" fill=\"white\"></path></svg><span class=\"blind\">팀 추가</span></a><div class=\"_no_team_hreie_1070\">응원하는 팀을 구독해보세요!</div></div></nav><div class=\"_link_vowel_hreie_1141\"><nav class=\"_section_links_hreie_1202\"><strong class=\"_title_hreie_1011\">스포츠</strong><a class=\"_link_hreie_32\" href=\"/kbaseball/index\">야구</a><a class=\"_link_hreie_32\" href=\"/wbaseball/index\">해외야구</a><a class=\"_link_hreie_32\" href=\"/kfootball/index\">축구</a><a class=\"_link_hreie_32\" href=\"/wfootball/index\">해외축구</a><a class=\"_link_hreie_32\" href=\"/basketball/index\">농구</a><a class=\"_link_hreie_32\" href=\"/volleyball/index\">배구</a><a class=\"_link_hreie_32\" href=\"/golf/index\">N골프</a><a class=\"_link_hreie_32\" href=\"/general/index\">체전・일반</a><a class=\"_link_hreie_32\" href=\"https://game.naver.com/esports\">e스포츠</a><a class=\"_link_hreie_32\" href=\"/outdoor/index\">아웃도어</a></nav><nav class=\"_section_links_hreie_1202\"><strong class=\"_title_hreie_1011\">콘텐츠</strong><a class=\"_link_hreie_32\" href=\"/scoreboard/index\">오늘의 경기</a><a class=\"_link_hreie_32\" href=\"/predict\">승부예측</a><a class=\"_link_hreie_32\" href=\"/column/press/columnist?categoryId=ALL\">연재</a><a class=\"_link_hreie_32\" href=\"/community/issuetalk/index\">이슈톡</a><a class=\"_link_hreie_32\" href=\"/university/index\">대학스포츠</a><a class=\"_link_hreie_32\" href=\"/ranking/index\">랭킹</a></nav><nav class=\"_section_links_hreie_1202\"><strong class=\"_title_hreie_1011\">기타</strong><a class=\"_link_hreie_32\" href=\"https://help.naver.com/alias/contents2/sports/sports_2.naver\" rel=\"noreferrer\">고객센터</a><a class=\"_link_hreie_32\" href=\"https://blog.naver.com/naver_sports\">공식 블로그</a></nav></div><button class=\"_button_close_hreie_870\" type=\"button\"><svg width=\"30\" height=\"30\" viewBox=\"0 0 30 30\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" class=\"_icon_close_hreie_878\"><path d=\"M7.56608 22.0671C7.21461 21.7156 7.21461 21.1457 7.56608 20.7943L20.4215 7.93887C20.773 7.5874 21.3428 7.5874 21.6943 7.93887C22.0457 8.29034 22.0457 8.86019 21.6943 9.21166L8.83887 22.0671C8.4874 22.4185 7.91756 22.4185 7.56608 22.0671Z\" fill=\"#222222\"></path><path d=\"M7.8636 7.6364C8.21508 7.28492 8.78492 7.28492 9.1364 7.6364L21.9918 20.4918C22.3433 20.8433 22.3433 21.4131 21.9918 21.7646C21.6403 22.1161 21.0705 22.1161 20.719 21.7646L7.8636 8.90919C7.51213 8.55772 7.51213 7.98787 7.8636 7.6364Z\" fill=\"#222222\"></path></svg><span class=\"blind\">메뉴 닫기</span></button></div></aside><!--/$--><div class=\"u_skip\"><a href=\"#content\">본문 바로가기</a></div><!--$--><div id=\"wrap\"><div class=\"NewsEnd_news_end__uUfk8\" id=\"content\" role=\"main\"><div class=\"NewsEnd_container__jgmoI\"><div class=\"NewsEnd_main_group__ILERe\"><div class=\"article_area\"><div class=\"Main_news_end_main__RUvv5\"><div class=\"ArticleHead_comp_article_head__zp1Id\"><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><div style=\"height:32px\"></div><!--/$--><div class=\"ArticleHead_article_head_title__YUNFf\"><h2 class=\"ArticleHead_article_title__qh8GV\">‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]</h2></div><div class=\"article_head_info\"><div class=\"DateInfo_article_head_date_info__CS6Gx\"><div class=\"DateInfo_info_item__3yQPs\"><span class=\"DateInfo_term__ys49m\">입력</span><em class=\"date\">2025.10.22. 오전 6:38</em></div><div class=\"DateInfo_info_item__3yQPs\"><span class=\"DateInfo_term__ys49m\">수정</span><em class=\"date\">2025.10.22. 오전 6:40</em></div><a class=\"DateInfo_link_origin_article__fbZs7\" href=\"https://www.mk.co.kr/article/11447762\" rel=\"noreferrer\" target=\"_blank\">기사원문</a></div><div class=\"ArticleHead_function_buttons_wrap__ASggQ\"><div class=\"ReactionButtonGroup_article_head_reaction_group__ZYqoR\"><button aria-expanded=\"false\" aria-pressed=\"false\" class=\"ReactionButtonGroup_button_reaction_layer__P9PJF\" type=\"button\"><span class=\"icon_reaction_wrap\"><span class=\"ReactionButtonGroup_icon_reaction__zek2B\"></span></span><span class=\"ReactionButtonGroup_count__BSL4J\">공감</span></button><div class=\"ReactionButtonGroup_reaction_layer___T2k7\"><ul class=\"LikeitReactionList_comp_likeit_reaction_list__8LiHV LikeitReactionList_type_layer__1WF_b\"><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_like__MhEsl\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">좋아요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_sad__JE5Xx\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">슬퍼요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_angry__TRpEm\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">화나요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_fan__I5xSD\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">팬이에요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_want__QCJOa\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">후속기사 원해요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li></ul></div></div><div class=\"FunctionButtons_article_head_function_buttons__mKb9l\"><div class=\"button_item\"><button aria-expanded=\"false\" aria-pressed=\"false\" class=\"FunctionButtons_button_function__UA4Dg FunctionButtons_type_tts_setting__C9LBZ\" type=\"button\"><span class=\"blind\">텍스트 음성 변환 서비스</span></button><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><!--/$--><div class=\"FunctionButtons_toast_message__akSu5\"><p class=\"FunctionButtons_message__D1lwX\">본문 듣기를 <em>종료</em>하였습니다.</p></div></div><div class=\"button_item\"><button aria-expanded=\"false\" class=\"FunctionButtons_button_function__UA4Dg FunctionButtons_type_font_setting__CZj9n\" type=\"button\"><span class=\"blind\">글자 크기 변경</span></button><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><!--/$--></div><div class=\"button_item\"><div class=\"ShareButton_sns_share__k7uDG\"><a class=\"naver-splugin spi_sns_share\" data-band-srvurl=\"&amp;from=band\" data-blog-blog-id=\"naver\" data-bog-source-type=\"3\" data-cafe-source-type=\"3\" data-kakaotalk-srvurl=\"&amp;from=kakaotalk\" data-likecontentsid=\"ne_410_0001095217\" data-likeserviceid=\"SPORTS\" data-line-srvurl=\"&amp;from=line\" data-mail-srvid=\"news\" data-main-srvurl=\"\" data-style=\"unity\" data-title=\"\" data-url=\"\" role=\"button\"><span class=\"naver-splugin-c\"><span class=\"blind\">공유하기</span></span></a></div></div></div></div></div></div><div class=\"ArticleContent_comp_article_content__luOFM\"><article class=\"Article_comp_news_article__XIpve _article_body\" id=\"comp_news_article\"><div class=\"_article_content\">‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다.<br/><br/>PSG는 22일(한국시간) 독일 레버쿠젠이 바이 아레나에서 열린 레버쿠젠과의 2025-26 UEFA 챔피언스리그 리그 페이즈 3라운드 원정 경기에서 7-2로 대승, 3연승을 달렸다.<br/><br/>PSG는 무려 7골을 넣으며 레버쿠젠을 무너뜨렸다. 서로 한 명씩 사이좋게 퇴장당한 상황에서 집중력을 발휘한 결과였다. ‘발롱도르 위너’ 뎀벨레는 복귀 축포를 골로 기념했다.<br/><br/><span class=\"end_photo_org\"><span class=\"ArticleImage_article_image__Fh1IX\"><span class=\"ArticleImage_image_wrap__cm1wZ\"><img alt=\"\" fetchPriority=\"high\" loading=\"eager\" width=\"647\" height=\"960\" decoding=\"async\" data-nimg=\"1\" style=\"color:transparent\" src=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg?type=w647\"/></span></span><em class=\"img_desc\"> ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스</em></span>이강인은 후반 63분 교체 투입, 27분 동안 그라운드에 섰다.<br/><br/>PSG는 골키퍼 슈발리에를 시작으로 하키미-자바르니-파초-멘데스-자이르 에메리-비티냐-두에-흐비차-마율루-바르콜라가 선발 출전했다.<br/><br/>레버쿠젠은 골키퍼 플레컨을 시작으로 탑소바-바데-안드리히-그리말도-가르시아-페르난데스-아르투르-포쿠-에체베리-코파네가 선발 출전한다.<br/><br/>PSG는 전반 7분 멘데스의 크로스를 파초가 헤더 마무리, 선제골을 터뜨렸다. 이후 전반 25분 자바르니의 핸드볼 파울로 페널티킥을 내줬으나 그리말도의 실축으로 위기를 극복했다. 전반 29분 마율루의 박스 안 슈팅은 골대를 강타했다.<br/><br/><span class=\"end_photo_org\"><span class=\"ArticleImage_article_image__Fh1IX\"><span class=\"ArticleImage_image_wrap__cm1wZ\"><img alt=\"\" fetchPriority=\"high\" loading=\"eager\" width=\"647\" height=\"427\" decoding=\"async\" data-nimg=\"1\" style=\"color:transparent\" src=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_002_20251022064018793.jpg?type=w647\"/></span></span><em class=\"img_desc\"> 자바르니의 퇴장은 PSG에 있어 위기였다. 그러나 오히려 각성한 PSG는 레버쿠젠 원정서 골 잔치를 펼쳤다. 사진=EPA=연합뉴스</em></span><span class=\"end_photo_org\"><span class=\"ArticleImage_article_image__Fh1IX\"><span class=\"ArticleImage_image_wrap__cm1wZ\"><img alt=\"\" loading=\"lazy\" width=\"647\" height=\"428\" decoding=\"async\" data-nimg=\"1\" style=\"color:transparent\" src=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_003_20251022064018829.jpg?type=w647\"/></span></span><em class=\"img_desc\"> 두에는 신들린 골 감각을 선보이며 PSG의 대승을 이끌었다. 사진=AFP=연합뉴스</em></span>전반 31분에는 안드리히의 팔꿈치 가격으로 수적 우위를 점하는 듯했다. 그러나 전반 38분 자바르니가 고의적인 파울로 퇴장당했고 가르시아에게 페널티킥을 내주며 1-1 동점을 허용했다.<br/><br/>그러나 PSG의 집중력은 대단했다. 전반 41분 흐비차의 패스를 두에가 곧바로 슈팅, 2-1로 앞섰다. 그리고 전반 44분 그리말도의 실수를 흐비차가 놓치지 않으며 슈팅, 3-1로 달아났다. 전반 추가시간에는 두에의 중거리 슈팅이 다시 한 번 레버쿠젠 골문을 열며 4-1, 기분 좋게 후반을 맞이했다.<br/><br/>후반에도 PSG의 화력은 강력했다. 후반 50분 비티냐의 킬 패스, 멘데스가 마무리하며 5-1이 됐다. 후반 54분 가르시아의 강력한 중거리 슈팅에 5-2, 실점했으나 후반 66분 멘데스 기점, 바르콜라의 패스를 뎀벨레가 마무리하며 6-2로 리드했다.<br/><br/>후반 90분에는 비티냐의 중거리 슈팅이 골로 연결되며 7-2, 혈전을 승리로 마무리했다.<br/><br/><span class=\"end_photo_org\"><span class=\"ArticleImage_article_image__Fh1IX\"><span class=\"ArticleImage_image_wrap__cm1wZ\"><img alt=\"\" loading=\"lazy\" width=\"647\" height=\"427\" decoding=\"async\" data-nimg=\"1\" style=\"color:transparent\" src=\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_004_20251022064018865.jpg?type=w647\"/></span></span><em class=\"img_desc\"> 뎀벨레와 바르콜라는 멋진 득점을 합작했다. 사진=AFP=연합뉴스</em></span>[민준구 MK스포츠 기자]<br/><br/></div></article><div class=\"journalist_card_wrap\"><div class=\"JournalistCard_comp_journalist_card__L3teN JournalistCard_is_show__LxsOX\"><div class=\"JournalistCard_profile_area__HX5s0\"><a class=\"JournalistCard_link_profile__478Ha\" href=\"https://media.naver.com/journalist/410/77697\"><div class=\"JournalistCard_image_wrap__ieRsj\"><span class=\"\" style=\"display:inline-block;width:36px;height:36px\"></span></div><div class=\"info_wrap\"><em class=\"JournalistCard_name__0ZSAO\">민준구<!-- --> 기자</em><div class=\"JournalistCard_sub_info__DPxir\"><span class=\"JournalistCard_sub_info_item__aElVN\">구독 <!-- -->0</span><span class=\"JournalistCard_sub_info_item__aElVN\">응원 <!-- -->0</span></div></div></a><button aria-pressed=\"false\" class=\"JournalistCard_button_subscribe__sjyCM\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" fill=\"none\" aria-hidden=\"true\"><path fill=\"#3283FD\" d=\"M7.5 2.308c.29 0 .525.235.525.525v4.142h4.142a.525.525 0 1 1 0 1.05H8.025v4.142a.525.525 0 0 1-1.05 0V8.025H2.834a.525.525 0 1 1 0-1.05h4.141V2.833c0-.29.235-.525.525-.525\"></path></svg>구독</button></div><div class=\"JournalistCard_news_area__fPKVY\"><ul class=\"JournalistCard_news_list__vSh7F\"><li class=\"JournalistCard_news_item__87Qrq\"><a class=\"JournalistCard_link_news__c280o\" href=\"/article/410/0001095208\">‘너 X약 한 거 아니지?’ 할러웨이도 깜짝 놀란 ‘재앙’ 실바의 ‘황당’ 백악관 콜아웃…“로페스한테 어떻게 박살 났는지 못 봤나” [UFC]</a></li><li class=\"JournalistCard_news_item__87Qrq\"><a class=\"JournalistCard_link_news__c280o\" href=\"/article/410/0001094830\">‘멍청한 놈, 포기했네’ 4R ‘항복 선언’ 더 리더, 역대급 조롱의 연속…‘미들급 챔피언’ 치마에프도 격렬한 비난 [UFC]</a></li></ul><a class=\"JournalistCard_link_press__Z7otp\" href=\"https://media.naver.com/press/410\"><div class=\"JournalistCard_press_image__oS6bx\"><span class=\"\" style=\"display:inline-block;width:20px;height:20px\"></span></div><em class=\"JournalistCard_press_name__s3Eup\">MK스포츠 </em>언론사홈 바로가기</a></div></div></div><div class=\"ArticleContent_sub_info_wrap__7nvmf\"><div class=\"Copyright_article_copyright__vN4Pg\">Copyright ⓒ MK스포츠 . All rights reserved. 무단 전재 및 재배포 금지.</div><div class=\"CategorizeGuide_article_categorize_guide__VUSIR\"><button aria-describedby=\"wa_categorize_guide\" aria-pressed=\"false\" class=\"CategorizeGuide_button_category_guide__zHE4Q\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" fill=\"none\" aria-hidden=\"true\" class=\"CategorizeGuide_icon_info__raG3V\"><path fill=\"#8A8A8A\" fill-rule=\"evenodd\" d=\"M7.5 14a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13m0 1a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15m-.7-8.5h1.4v5H6.8zm.7-1.4a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6\" clip-rule=\"evenodd\"></path></svg>기사 섹션 분류 가이드</button><div class=\"CategorizeGuide_tooltip__OMrGa\"><strong>기사 섹션 분류 안내</strong><p class=\"CategorizeGuide_tooltip_text__SOD1b\" id=\"wa_categorize_guide\" role=\"tooltip\">스포츠 기사 섹션(종목) 정보는 언론사 분류와 기술 기반의 자동 분류 시스템을 따르고 있습니다. 오분류에 대한 건은 네이버스포츠로 제보 부탁드립니다.</p><a class=\"CategorizeGuide_link_report__PZFXy\" href=\"https://help.naver.com/service/5610/contents/18370?lang=ko\" target=\"_blank\">오분류 제보하기<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"7\" height=\"12\" fill=\"none\" aria-hidden=\"true\"><path stroke=\"#858585\" d=\"m1 1 5 5-5 5\"></path></svg></a><button class=\"CategorizeGuide_button_close__oIIXj\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"none\" aria-hidden=\"true\"><path fill=\"#929294\" fill-rule=\"evenodd\" d=\"M1.354.646a.5.5 0 1 0-.708.708L7.293 8 .646 14.646a.5.5 0 0 0 .708.708L8 8.707l6.646 6.647a.5.5 0 0 0 .708-.708L8.707 8l6.647-6.646a.5.5 0 0 0-.708-.708L8 7.293z\" clip-rule=\"evenodd\"></path></svg><span class=\"blind\">닫기</span></button></div></div></div><div class=\"Promotion_article_promotion__jaw7A Promotion_type_bar__mouuY\"><ul class=\"Promotion_promotion_list__xoRl5\"><li class=\"Promotion_list_item__cZR12\"><a class=\"Promotion_link_promotion__0jEcJ\" href=\"https://ktopstar.net\">케이탑스타 오픈…안성훈·박지현·진해성·오유진 축하 영상</a></li><li class=\"Promotion_list_item__cZR12\"><a class=\"Promotion_link_promotion__0jEcJ\" href=\"https://mksports.co.kr/news/entertain/11446048\">지예은 활동 중단 2개월 만에 ‘런닝맨’ 복귀</a></li></ul></div><div class=\"MainNews_comp_article_main_news__VUN1V\"><h3 class=\"MainNews_title__Y9yW2\"><a class=\"link_media\" href=\"https://mksports.co.kr/\"><span class=\"MainNews_image_media__lbKD1\" style=\"display:inline-block;height:26px\"></span></a>주요뉴스</h3><p class=\"MainNews_description__cJ_k5\">해당 언론사에서 선정하며 언론사 페이지(아웃링크)로 이동해 볼 수 있습니다.</p><ul class=\"MainNews_news_list__LaVAL\"><li class=\"MainNews_news_item__Zo_sO\"><a class=\"MainNews_link_news__J5pQr\" href=\"https://www.mk.co.kr/article/11445915?utm_source=naver&amp;utm_medium=link&amp;utm_campaign=relatednews\" rel=\"noreferrer noopener\" target=\"_blank\">&quot;씨스타 소유, 미국 항공기 만취 탑승&quot; 주장</a></li><li class=\"MainNews_news_item__Zo_sO\"><a class=\"MainNews_link_news__J5pQr\" href=\"https://www.mk.co.kr/article/11445707?utm_source=naver&amp;utm_medium=link&amp;utm_campaign=relatednews\" rel=\"noreferrer noopener\" target=\"_blank\">박진주 11월30일 비연예인 남편과 결혼 발표</a></li><li class=\"MainNews_news_item__Zo_sO\"><a class=\"MainNews_link_news__J5pQr\" href=\"https://www.mk.co.kr/article/11437426?utm_source=naver&amp;utm_medium=link&amp;utm_campaign=relatednews\" rel=\"noreferrer noopener\" target=\"_blank\">아이브 장원영, 시선집중되는 로맨틱한 파티 여신</a></li><li class=\"MainNews_news_item__Zo_sO\"><a class=\"MainNews_link_news__J5pQr\" href=\"https://www.mk.co.kr/article/11437001?utm_source=naver&amp;utm_medium=link&amp;utm_campaign=relatednews\" rel=\"noreferrer noopener\" target=\"_blank\">섹시 핫바디 홍지윤 밀착 레깅스&amp;래시가드 자태</a></li><li class=\"MainNews_news_item__Zo_sO\"><a class=\"MainNews_link_news__J5pQr\" href=\"https://www.mk.co.kr/article/11446654?utm_source=naver&amp;utm_medium=link&amp;utm_campaign=relatednews\" rel=\"noreferrer noopener\" target=\"_blank\">두산 김원형 감독 선임…한국시리즈 우승지도 경력</a></li></ul></div><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><!--/$--><div class=\"ReactionButtonList_comp_reaction_button_list__gimfd\"><ul class=\"LikeitReactionList_comp_likeit_reaction_list__8LiHV\"><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_like__MhEsl\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">좋아요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_sad__JE5Xx\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">슬퍼요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_angry__TRpEm\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">화나요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_fan__I5xSD\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">팬이에요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li><li class=\"LikeitReactionList_reaction_item__ByUuH LikeitReactionList_type_want__QCJOa\"><button aria-pressed=\"false\" class=\"LikeitReactionList_button_reaction__XBqSi\" type=\"button\"><span class=\"LikeitReactionList_text__EwbbK\">후속기사 원해요</span><em class=\"LikeitReactionList_count__ys4Cl\">0</em></button></li></ul></div></div><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><!--/$--></div></div><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><!--/$--></div><div class=\"NewsEnd_aside_group__Q38hl\"><div><!--$!--><template data-dgst=\"BAILOUT_TO_CLIENT_SIDE_RENDERING\"></template><div class=\"AsideSkeleton_comp_skeleton__SozIp\"><div class=\"AsideSkeleton_skeleton_pc__H0fuH\"><svg fill=\"none\" viewBox=\"0 0 341 906\" xmlns=\"http://www.w3.org/2000/svg\"><g><rect class=\"AsideSkeleton_type_background__sLLD3\" fill=\"white\" height=\"506\" rx=\"16\" width=\"340\" x=\"0.5\"></rect><rect fill=\"#F4F6F8\" height=\"22\" rx=\"4\" width=\"197\" x=\"24.5\" y=\"24\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" d=\"M24.5 72C24.5 65.3726 29.8726 60 36.5 60H304.5C311.127 60 316.5 65.3726 316.5 72V172C316.5 178.627 311.127 184 304.5 184H36.5C29.8726 184 24.5 178.627 24.5 172V72Z\" fill=\"#F4F6F8\"></path><path class=\"AsideSkeleton_type_border__ndxIQ\" d=\"M25 72C25 65.6487 30.1487 60.5 36.5 60.5H304.5C310.851 60.5 316 65.6487 316 72V100C316 106.351 310.851 111.5 304.5 111.5H36.5C30.1487 111.5 25 106.351 25 100V72Z\" stroke=\"#EAEEF3\"></path><circle cx=\"52.5\" cy=\"86\" fill=\"#F4F6F8\" r=\"12\"></circle><rect fill=\"#F4F6F8\" height=\"21\" rx=\"4\" width=\"139\" x=\"76.5\" y=\"75.5\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" d=\"M24.5 204C24.5 197.373 29.8726 192 36.5 192H304.5C311.127 192 316.5 197.373 316.5 204V232C316.5 238.627 311.127 244 304.5 244H36.5C29.8726 244 24.5 238.627 24.5 232V204Z\" fill=\"#F4F6F8\"></path><path class=\"AsideSkeleton_type_background__sLLD3\" d=\"M24.5 264C24.5 257.373 29.8726 252 36.5 252H304.5C311.127 252 316.5 257.373 316.5 264V292C316.5 298.627 311.127 304 304.5 304H36.5C29.8726 304 24.5 298.627 24.5 292V264Z\" fill=\"#F4F6F8\"></path><path class=\"AsideSkeleton_type_background__sLLD3\" d=\"M24.5 324C24.5 317.373 29.8726 312 36.5 312H304.5C311.127 312 316.5 317.373 316.5 324V352C316.5 358.627 311.127 364 304.5 364H36.5C29.8726 364 24.5 358.627 24.5 352V324Z\" fill=\"#F4F6F8\"></path><path class=\"AsideSkeleton_type_background__sLLD3\" d=\"M24.5 384C24.5 377.373 29.8726 372 36.5 372H304.5C311.127 372 316.5 377.373 316.5 384V412C316.5 418.627 311.127 424 304.5 424H36.5C29.8726 424 24.5 418.627 24.5 412V384Z\" fill=\"#F4F6F8\"></path><path class=\"AsideSkeleton_type_background__sLLD3\" d=\"M24.5 460C24.5 447.85 34.3497 438 46.5 438H294.5C306.65 438 316.5 447.85 316.5 460C316.5 472.15 306.65 482 294.5 482H46.5C34.3497 482 24.5 472.15 24.5 460Z\" fill=\"#F4F6F8\"></path></g><g><rect class=\"AsideSkeleton_type_background__sLLD3\" fill=\"white\" height=\"252\" rx=\"16\" width=\"340\" x=\"0.5\" y=\"520\"></rect><rect fill=\"#F4F6F8\" height=\"24\" rx=\"4\" width=\"241\" x=\"24.5\" y=\"544\"></rect><rect fill=\"#F4F6F8\" height=\"16\" rx=\"4\" width=\"292\" x=\"24.5\" y=\"592.5\"></rect><rect fill=\"#EAEEF3\" height=\"1\" width=\"292\" x=\"24.5\" y=\"621\"></rect><rect fill=\"#F4F6F8\" height=\"16\" rx=\"4\" width=\"292\" x=\"24.5\" y=\"634.5\"></rect><rect fill=\"#EAEEF3\" height=\"1\" width=\"292\" x=\"24.5\" y=\"663\"></rect><rect fill=\"#F4F6F8\" height=\"16\" rx=\"4\" width=\"292\" x=\"24.5\" y=\"676\"></rect><rect fill=\"#EAEEF3\" height=\"1\" width=\"292\" x=\"24.5\" y=\"704\"></rect><rect fill=\"#F4F6F8\" height=\"16\" rx=\"4\" width=\"292\" x=\"24.5\" y=\"718.5\"></rect></g><g><rect class=\"AsideSkeleton_type_background__sLLD3\" fill=\"white\" height=\"120\" rx=\"16\" width=\"340\" x=\"0.5\" y=\"786\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" clip-rule=\"evenodd\" d=\"M58.804 814.696C57.2177 813.11 55.2229 811.934 53.0155 811.364C51.669 810.795 47.6822 810 40.5005 810C33.3188 810 29.3321 810.795 27.9845 811.364C25.7771 811.934 23.7823 813.11 22.196 814.696C20.6108 816.282 19.4341 818.277 18.8651 820.484C18.295 821.832 17.5 825.869 17.5 832.999C17.5 840.13 18.295 844.169 18.8651 845.516C19.4341 847.723 20.6108 849.718 22.196 851.304C23.7823 852.889 25.7771 854.066 27.9845 854.636C29.3321 855.206 33.2337 856 40.5005 856C47.7673 856 51.669 855.206 53.0155 854.636C55.2229 854.066 57.2177 852.889 58.804 851.304C60.3903 849.718 61.5659 847.723 62.136 845.516C62.7061 844.169 63.5 840.116 63.5 832.999C63.5 825.883 62.7061 821.832 62.136 820.484C61.5659 818.277 60.3903 816.282 58.804 814.696Z\" fill=\"#F4F6F8\" fill-rule=\"evenodd\"></path><rect fill=\"#F4F6F8\" height=\"13\" rx=\"4\" width=\"37\" x=\"22\" y=\"865.5\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" clip-rule=\"evenodd\" d=\"M122.804 814.696C121.218 813.11 119.223 811.934 117.016 811.364C115.669 810.795 111.682 810 104.501 810C97.3188 810 93.3321 810.795 91.9845 811.364C89.7771 811.934 87.7823 813.11 86.196 814.696C84.6108 816.282 83.4341 818.277 82.8651 820.484C82.295 821.832 81.5 825.869 81.5 832.999C81.5 840.13 82.295 844.169 82.8651 845.516C83.4341 847.723 84.6108 849.718 86.196 851.304C87.7823 852.889 89.7771 854.066 91.9845 854.636C93.3321 855.206 97.2337 856 104.501 856C111.767 856 115.669 855.206 117.016 854.636C119.223 854.066 121.218 852.889 122.804 851.304C124.39 849.718 125.566 847.723 126.136 845.516C126.706 844.169 127.5 840.116 127.5 832.999C127.5 825.883 126.706 821.832 126.136 820.484C125.566 818.277 124.39 816.282 122.804 814.696Z\" fill=\"#F4F6F8\" fill-rule=\"evenodd\"></path><rect fill=\"#F4F6F8\" height=\"13\" rx=\"4\" width=\"37\" x=\"86\" y=\"865.5\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" clip-rule=\"evenodd\" d=\"M186.804 814.696C185.218 813.11 183.223 811.934 181.016 811.364C179.669 810.795 175.682 810 168.501 810C161.319 810 157.332 810.795 155.984 811.364C153.777 811.934 151.782 813.11 150.196 814.696C148.611 816.282 147.434 818.277 146.865 820.484C146.295 821.832 145.5 825.869 145.5 832.999C145.5 840.13 146.295 844.169 146.865 845.516C147.434 847.723 148.611 849.718 150.196 851.304C151.782 852.889 153.777 854.066 155.984 854.636C157.332 855.206 161.234 856 168.501 856C175.767 856 179.669 855.206 181.016 854.636C183.223 854.066 185.218 852.889 186.804 851.304C188.39 849.718 189.566 847.723 190.136 845.516C190.706 844.169 191.5 840.116 191.5 832.999C191.5 825.883 190.706 821.832 190.136 820.484C189.566 818.277 188.39 816.282 186.804 814.696Z\" fill=\"#F4F6F8\" fill-rule=\"evenodd\"></path><rect fill=\"#F4F6F8\" height=\"13\" rx=\"4\" width=\"37\" x=\"150\" y=\"865.5\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" clip-rule=\"evenodd\" d=\"M250.804 814.696C249.218 813.11 247.223 811.934 245.016 811.364C243.669 810.795 239.682 810 232.501 810C225.319 810 221.332 810.795 219.984 811.364C217.777 811.934 215.782 813.11 214.196 814.696C212.611 816.282 211.434 818.277 210.865 820.484C210.295 821.832 209.5 825.869 209.5 832.999C209.5 840.13 210.295 844.169 210.865 845.516C211.434 847.723 212.611 849.718 214.196 851.304C215.782 852.889 217.777 854.066 219.984 854.636C221.332 855.206 225.234 856 232.501 856C239.767 856 243.669 855.206 245.016 854.636C247.223 854.066 249.218 852.889 250.804 851.304C252.39 849.718 253.566 847.723 254.136 845.516C254.706 844.169 255.5 840.116 255.5 832.999C255.5 825.883 254.706 821.832 254.136 820.484C253.566 818.277 252.39 816.282 250.804 814.696Z\" fill=\"#F4F6F8\" fill-rule=\"evenodd\"></path><rect fill=\"#F4F6F8\" height=\"13\" rx=\"4\" width=\"37\" x=\"214\" y=\"865.5\"></rect><path class=\"AsideSkeleton_type_background__sLLD3\" clip-rule=\"evenodd\" d=\"M314.804 814.696C313.218 813.11 311.223 811.934 309.016 811.364C307.669 810.795 303.682 810 296.501 810C289.319 810 285.332 810.795 283.984 811.364C281.777 811.934 279.782 813.11 278.196 814.696C276.611 816.282 275.434 818.277 274.865 820.484C274.295 821.832 273.5 825.869 273.5 832.999C273.5 840.13 274.295 844.169 274.865 845.516C275.434 847.723 276.611 849.718 278.196 851.304C279.782 852.889 281.777 854.066 283.984 854.636C285.332 855.206 289.234 856 296.501 856C303.767 856 307.669 855.206 309.016 854.636C311.223 854.066 313.218 852.889 314.804 851.304C316.39 849.718 317.566 847.723 318.136 845.516C318.706 844.169 319.5 840.116 319.5 832.999C319.5 825.883 318.706 821.832 318.136 820.484C317.566 818.277 316.39 816.282 314.804 814.696Z\" fill=\"#F4F6F8\" fill-rule=\"evenodd\"></path><rect fill=\"#F4F6F8\" height=\"13\" rx=\"4\" width=\"37\" x=\"278\" y=\"865.5\"></rect></g></svg></div></div><!--/$--></div></div></div></div></div><!--/$--></main><script src=\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/chunks/webpack-921f7787d4e2f753.js\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0]);self.__next_f.push([2,null])</script><script>self.__next_f.push([1,\"1:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/41b9b3ece820718f-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n2:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/81b352a4d7a000ae-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n3:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/9031250013752d4b-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n4:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/d587d1c112526568-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n5:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/d83e92f0af8b17e4-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n6:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/e52907b750a6f61e-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n7:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/eb9adf802b0a60eb-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n8:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/ed42d1b51efd45f6-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\n9:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/fba9d678ff638e59-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\na:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/media/fbaa11b0ea175105-s.p.woff2\\\",\\\"font\\\",{\\\"crossOrigin\\\":\\\"\\\",\\\"type\\\":\\\"font/woff2\\\"}]\\nb:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/568268dc22ce8f66.css\\\",\\\"style\\\"]\\nc:HL[\\\"https://ssl.pstatic.\"])</script><script>self.__next_f.push([1,\"net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/510da1bf1712cd44.css\\\",\\\"style\\\"]\\nd:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/c4a06dc7bdf98075.css\\\",\\\"style\\\"]\\ne:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4ce6adf7cd9eeda9.css\\\",\\\"style\\\"]\\nf:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/b3eea54ef3a11c7f.css\\\",\\\"style\\\"]\\n10:HL[\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4dd2b5709f0b5ec6.css\\\",\\\"style\\\"]\\n\"])</script><script>self.__next_f.push([1,\"11:I[94622,[],\\\"\\\"]\\n14:I[81001,[],\\\"\\\"]\\n18:I[13776,[],\\\"\\\"]\\n19:I[61490,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"3438\\\",\\\"static/chunks/app/%5Bsection%5D/layout-045fa6bf8043800c.js\\\"],\\\"Header\\\"]\\n1a:I[90543,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"3438\\\",\\\"static/chunks/app/%5Bsection%5D/layout-045fa6bf8043800c.js\\\"],\\\"Footer\\\"]\\n1b:I[25195,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"3438\\\",\\\"static/chunks/app/%5Bsection%5D/layout-045fa6bf8043800c.js\\\"],\\\"GoToTopButton\\\"]\\n1c:I[36919,[\\\"6919\\\",\\\"static/chunks/6919-52adb2537c9d9540.js\\\",\\\"8116\\\",\\\"static/chunks/app/%5Bsection%5D/loading-fd5c16699d6c8d84.js\\\"],\\\"BodySkeleton\\\"]\\n1d:I[59091,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"6154\\\",\\\"static/chunks/6154-d1f650461ddbf7fc.js\\\",\\\"5251\\\",\\\"static/chunks/5251-368847b84a9bdc48.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"3185\\\",\\\"static/chunks/app/layout-c9fc67ef8e8662e5.js\\\"],\\\"AppMandatory\\\"]\\n1e:I[31396,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"7601\\\",\\\"static/chunks/app/error-212a8799765be5f8.js\\\"],\\\"default\\\"]\\n1f:I[68645,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"9160\\\",\\\"static/chunks/app/not-found-cd6648d41e6d7618.js\\\"],\\\"default\\\"]\\n21:I[76760,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"6470\\\",\\\"static/chunks/app/global-error-7715a2e2a3ec87d5.js\\\"],\\\"default\\\"]\\n15:[\\\"section\\\",\\\"wfootball\\\",\\\"d\\\"]\\n16:[\\\"oid\\\",\\\"410\\\",\\\"d\\\"]\\n17:[\\\"aid\\\",\\\"0001095217\\\",\\\"d\\\"]\\n22:[]\\n\"])</script><script>self.__next_f.push([1,\"0:[\\\"$\\\",\\\"$L11\\\",null,{\\\"buildId\\\":\\\"251020-134344\\\",\\\"assetPrefix\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344\\\",\\\"urlParts\\\":[\\\"\\\",\\\"wfootball\\\",\\\"article\\\",\\\"410\\\",\\\"0001095217\\\"],\\\"initialTree\\\":[\\\"\\\",{\\\"children\\\":[[\\\"section\\\",\\\"wfootball\\\",\\\"d\\\"],{\\\"children\\\":[\\\"article\\\",{\\\"children\\\":[[\\\"oid\\\",\\\"410\\\",\\\"d\\\"],{\\\"children\\\":[[\\\"aid\\\",\\\"0001095217\\\",\\\"d\\\"],{\\\"children\\\":[\\\"__PAGE__\\\",{}]}]}]}]}]},\\\"$undefined\\\",\\\"$undefined\\\",true],\\\"initialSeedData\\\":[\\\"\\\",{\\\"children\\\":[[\\\"section\\\",\\\"wfootball\\\",\\\"d\\\"],{\\\"children\\\":[\\\"article\\\",{\\\"children\\\":[[\\\"oid\\\",\\\"410\\\",\\\"d\\\"],{\\\"children\\\":[[\\\"aid\\\",\\\"0001095217\\\",\\\"d\\\"],{\\\"children\\\":[\\\"__PAGE__\\\",{},[[\\\"$L12\\\",\\\"$L13\\\",[[\\\"$\\\",\\\"link\\\",\\\"0\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4ce6adf7cd9eeda9.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"link\\\",\\\"1\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/b3eea54ef3a11c7f.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"link\\\",\\\"2\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4dd2b5709f0b5ec6.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}]]],null],null]},[null,[\\\"$\\\",\\\"$L14\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"segmentPath\\\":[\\\"children\\\",\\\"$15\\\",\\\"children\\\",\\\"article\\\",\\\"children\\\",\\\"$16\\\",\\\"children\\\",\\\"$17\\\",\\\"children\\\"],\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L18\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":\\\"$undefined\\\",\\\"notFoundStyles\\\":\\\"$undefined\\\"}]],null]},[null,[\\\"$\\\",\\\"$L14\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"segmentPath\\\":[\\\"children\\\",\\\"$15\\\",\\\"children\\\",\\\"article\\\",\\\"children\\\",\\\"$16\\\",\\\"children\\\"],\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L18\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":\\\"$undefined\\\",\\\"notFoundStyles\\\":\\\"$undefined\\\"}]],null]},[null,[\\\"$\\\",\\\"$L14\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"segmentPath\\\":[\\\"children\\\",\\\"$15\\\",\\\"children\\\",\\\"article\\\",\\\"children\\\"],\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L18\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":\\\"$undefined\\\",\\\"notFoundStyles\\\":\\\"$undefined\\\"}]],null]},[[null,[\\\"$\\\",\\\"main\\\",null,{\\\"children\\\":[[\\\"$\\\",\\\"$L19\\\",null,{}],[\\\"$\\\",\\\"div\\\",null,{\\\"className\\\":\\\"u_skip\\\",\\\"children\\\":[\\\"$\\\",\\\"a\\\",null,{\\\"href\\\":\\\"#content\\\",\\\"children\\\":\\\"본문 바로가기\\\"}]}],[\\\"$\\\",\\\"$L14\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"segmentPath\\\":[\\\"children\\\",\\\"$15\\\",\\\"children\\\"],\\\"error\\\":\\\"$undefined\\\",\\\"errorStyles\\\":\\\"$undefined\\\",\\\"errorScripts\\\":\\\"$undefined\\\",\\\"template\\\":[\\\"$\\\",\\\"$L18\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":\\\"$undefined\\\",\\\"notFoundStyles\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"$L1a\\\",null,{}],[\\\"$\\\",\\\"$L1b\\\",null,{}]]}]],null],[[\\\"$\\\",\\\"$L1c\\\",null,{}],[[\\\"$\\\",\\\"link\\\",\\\"0\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/4ce6adf7cd9eeda9.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}]],[]]]},[[[[\\\"$\\\",\\\"link\\\",\\\"0\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/568268dc22ce8f66.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"link\\\",\\\"1\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/510da1bf1712cd44.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}],[\\\"$\\\",\\\"link\\\",\\\"2\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static.sports/nubes-resource/sports-web-next/news/251020-134344/_next/static/css/c4a06dc7bdf98075.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"$undefined\\\"}]],[\\\"$\\\",\\\"html\\\",null,{\\\"lang\\\":\\\"ko\\\",\\\"suppressHydrationWarning\\\":true,\\\"children\\\":[\\\"$\\\",\\\"body\\\",null,{\\\"className\\\":\\\"NEWS __variable_e031cd __variable_aac044\\\",\\\"suppressHydrationWarning\\\":true,\\\"children\\\":[\\\"$\\\",\\\"$L1d\\\",null,{\\\"children\\\":[\\\"$\\\",\\\"$L14\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"segmentPath\\\":[\\\"children\\\"],\\\"error\\\":\\\"$1e\\\",\\\"errorStyles\\\":[],\\\"errorScripts\\\":[],\\\"template\\\":[\\\"$\\\",\\\"$L18\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":[\\\"$\\\",\\\"$L1f\\\",null,{}],\\\"notFoundStyles\\\":[]}]}]}]}]],null],null],\\\"couldBeIntercepted\\\":false,\\\"initialHead\\\":[null,\\\"$L20\\\"],\\\"globalErrorComponent\\\":\\\"$21\\\",\\\"missingSlots\\\":\\\"$W22\\\"}]\\n\"])</script><script>self.__next_f.push([1,\"23:I[10445,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"6154\\\",\\\"static/chunks/6154-d1f650461ddbf7fc.js\\\",\\\"1127\\\",\\\"static/chunks/1127-7e1b3a8c46d77262.js\\\",\\\"3203\\\",\\\"static/chunks/3203-c1b38c3909505e6f.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"8225\\\",\\\"static/chunks/8225-241afa73672998eb.js\\\",\\\"2901\\\",\\\"static/chunks/app/%5Bsection%5D/article/%5Boid%5D/%5Baid%5D/page-3858c7c475699c9d.js\\\"],\\\"HydrationBoundary\\\"]\\n26:I[8543,[\\\"2522\\\",\\\"static/chunks/20f0ddde-e65d15ca91772aad.js\\\",\\\"200\\\",\\\"static/chunks/200-fb44f19e6bdd305e.js\\\",\\\"6154\\\",\\\"static/chunks/6154-d1f650461ddbf7fc.js\\\",\\\"1127\\\",\\\"static/chunks/1127-7e1b3a8c46d77262.js\\\",\\\"3203\\\",\\\"static/chunks/3203-c1b38c3909505e6f.js\\\",\\\"3997\\\",\\\"static/chunks/3997-d44b97f474982781.js\\\",\\\"8225\\\",\\\"static/chunks/8225-241afa73672998eb.js\\\",\\\"2901\\\",\\\"static/chunks/app/%5Bsection%5D/article/%5Boid%5D/%5Baid%5D/page-3858c7c475699c9d.js\\\"],\\\"NewsEnd\\\"]\\n24:Tec9,\"])</script><script>self.__next_f.push([1,\"‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다.\\u003cbr\\u003e\\u003cbr\\u003ePSG는 22일(한국시간) 독일 레버쿠젠이 바이 아레나에서 열린 레버쿠젠과의 2025-26 UEFA 챔피언스리그 리그 페이즈 3라운드 원정 경기에서 7-2로 대승, 3연승을 달렸다.\\u003cbr\\u003e\\u003cbr\\u003ePSG는 무려 7골을 넣으며 레버쿠젠을 무너뜨렸다. 서로 한 명씩 사이좋게 퇴장당한 상황에서 집중력을 발휘한 결과였다. ‘발롱도르 위너’ 뎀벨레는 복귀 축포를 골로 기념했다.\\u003cbr\\u003e\\u003cbr\\u003e\\u003cspan class=\\\"end_photo_org\\\"\\u003e\\u003cimg src=\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\\\" alt=\\\"\\\" /\\u003e\\u003cem class=\\\"img_desc\\\"\\u003e ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스\\u003c/em\\u003e\\u003c/span\\u003e이강인은 후반 63분 교체 투입, 27분 동안 그라운드에 섰다.\\u003cbr\\u003e\\u003cbr\\u003ePSG는 골키퍼 슈발리에를 시작으로 하키미-자바르니-파초-멘데스-자이르 에메리-비티냐-두에-흐비차-마율루-바르콜라가 선발 출전했다.\\u003cbr\\u003e\\u003cbr\\u003e레버쿠젠은 골키퍼 플레컨을 시작으로 탑소바-바데-안드리히-그리말도-가르시아-페르난데스-아르투르-포쿠-에체베리-코파네가 선발 출전한다.\\u003cbr\\u003e\\u003cbr\\u003ePSG는 전반 7분 멘데스의 크로스를 파초가 헤더 마무리, 선제골을 터뜨렸다. 이후 전반 25분 자바르니의 핸드볼 파울로 페널티킥을 내줬으나 그리말도의 실축으로 위기를 극복했다. 전반 29분 마율루의 박스 안 슈팅은 골대를 강타했다.\\u003cbr\\u003e\\u003cbr\\u003e\\u003cspan class=\\\"end_photo_org\\\"\\u003e\\u003cimg src=\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_002_20251022064018793.jpg\\\" alt=\\\"\\\" /\\u003e\\u003cem class=\\\"img_desc\\\"\\u003e 자바르니의 퇴장은 PSG에 있어 위기였다. 그러나 오히려 각성한 PSG는 레버쿠젠 원정서 골 잔치를 펼쳤다. 사진=EPA=연합뉴스\\u003c/em\\u003e\\u003c/span\\u003e\\u003cspan class=\\\"end_photo_org\\\"\\u003e\\u003cimg src=\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_003_20251022064018829.jpg\\\" alt=\\\"\\\" /\\u003e\\u003cem class=\\\"img_desc\\\"\\u003e 두에는 신들린 골 감각을 선보이며 PSG의 대승을 이끌었다. 사진=AFP=연합뉴스\\u003c/em\\u003e\\u003c/span\\u003e전반 31분에는 안드리히의 팔꿈치 가격으로 수적 우위를 점하는 듯했다. 그러나 전반 38분 자바르니가 고의적인 파울로 퇴장당했고 가르시아에게 페널티킥을 내주며 1-1 동점을 허용했다.\\u003cbr\\u003e\\u003cbr\\u003e그러나 PSG의 집중력은 대단했다. 전반 41분 흐비차의 패스를 두에가 곧바로 슈팅, 2-1로 앞섰다. 그리고 전반 44분 그리말도의 실수를 흐비차가 놓치지 않으며 슈팅, 3-1로 달아났다. 전반 추가시간에는 두에의 중거리 슈팅이 다시 한 번 레버쿠젠 골문을 열며 4-1, 기분 좋게 후반을 맞이했다.\\u003cbr\\u003e\\u003cbr\\u003e후반에도 PSG의 화력은 강력했다. 후반 50분 비티냐의 킬 패스, 멘데스가 마무리하며 5-1이 됐다. 후반 54분 가르시아의 강력한 중거리 슈팅에 5-2, 실점했으나 후반 66분 멘데스 기점, 바르콜라의 패스를 뎀벨레가 마무리하며 6-2로 리드했다.\\u003cbr\\u003e\\u003cbr\\u003e후반 90분에는 비티냐의 중거리 슈팅이 골로 연결되며 7-2, 혈전을 승리로 마무리했다.\\u003cbr\\u003e\\u003cbr\\u003e\\u003cspan class=\\\"end_photo_org\\\"\\u003e\\u003cimg src=\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_004_20251022064018865.jpg\\\" alt=\\\"\\\" /\\u003e\\u003cem class=\\\"img_desc\\\"\\u003e 뎀벨레와 바르콜라는 멋진 득점을 합작했다. 사진=AFP=연합뉴스\\u003c/em\\u003e\\u003c/span\\u003e[민준구 MK스포츠 기자]\\u003cbr\\u003e\\u003cbr\\u003e\\u003c!-- r_start //--\\u003e\\u003c!-- r_end //--\\u003e\"])</script><script>self.__next_f.push([1,\"25:T97d,\"])</script><script>self.__next_f.push([1,\"‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. PSG는 22일(한국시간) 독일 레버쿠젠이 바이 아레나에서 열린 레버쿠젠과의 2025-26 UEFA 챔피언스리그 리그 페이즈 3라운드 원정 경기에서 7-2로 대승, 3연승을 달렸다. PSG는 무려 7골을 넣으며 레버쿠젠을 무너뜨렸다. 서로 한 명씩 사이좋게 퇴장당한 상황에서 집중력을 발휘한 결과였다. ‘발롱도르 위너’ 뎀벨레는 복귀 축포를 골로 기념했다. 이강인은 후반 63분 교체 투입, 27분 동안 그라운드에 섰다. PSG는 골키퍼 슈발리에를 시작으로 하키미-자바르니-파초-멘데스-자이르 에메리-비티냐-두에-흐비차-마율루-바르콜라가 선발 출전했다. 레버쿠젠은 골키퍼 플레컨을 시작으로 탑소바-바데-안드리히-그리말도-가르시아-페르난데스-아르투르-포쿠-에체베리-코파네가 선발 출전한다. PSG는 전반 7분 멘데스의 크로스를 파초가 헤더 마무리, 선제골을 터뜨렸다. 이후 전반 25분 자바르니의 핸드볼 파울로 페널티킥을 내줬으나 그리말도의 실축으로 위기를 극복했다. 전반 29분 마율루의 박스 안 슈팅은 골대를 강타했다. 전반 31분에는 안드리히의 팔꿈치 가격으로 수적 우위를 점하는 듯했다. 그러나 전반 38분 자바르니가 고의적인 파울로 퇴장당했고 가르시아에게 페널티킥을 내주며 1-1 동점을 허용했다. 그러나 PSG의 집중력은 대단했다. 전반 41분 흐비차의 패스를 두에가 곧바로 슈팅, 2-1로 앞섰다. 그리고 전반 44분 그리말도의 실수를 흐비차가 놓치지 않으며 슈팅, 3-1로 달아났다. 전반 추가시간에는 두에의 중거리 슈팅이 다시 한 번 레버쿠젠 골문을 열며 4-1, 기분 좋게 후반을 맞이했다. 후반에도 PSG의 화력은 강력했다. 후반 50분 비티냐의 킬 패스, 멘데스가 마무리하며 5-1이 됐다. 후반 54분 가르시아의 강력한 중거리 슈팅에 5-2, 실점했으나 후반 66분 멘데스 기점, 바르콜라의 패스를 뎀벨레가 마무리하며 6-2로 리드했다. 후반 90분에는 비티냐의 중거리 슈팅이 골로 연결되며 7-2, 혈전을 승리로 마무리했다.\"])</script><script>self.__next_f.push([1,\"13:[\\\"$\\\",\\\"$L23\\\",null,{\\\"state\\\":{\\\"mutations\\\":[],\\\"queries\\\":[{\\\"state\\\":{\\\"data\\\":{\\\"code\\\":200,\\\"success\\\":true,\\\"result\\\":{\\\"articleInfo\\\":{\\\"article\\\":{\\\"officeId\\\":\\\"410\\\",\\\"articleId\\\":\\\"0001095217\\\",\\\"type\\\":\\\"1\\\",\\\"gdid\\\":\\\"88127054_000000000000000001095217\\\",\\\"content\\\":\\\"$24\\\",\\\"subcontent\\\":\\\"‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다.PSG는 22일(한국시간) 독일 레버쿠젠이 바이 아레나에서 열린 레버쿠젠과의 2025-26 UEFA 챔피언스리그 리그 페이즈 3라운드 원정 경기에서 7-2로 대승, 3연승을 달렸다.PSG는 무려 7...\\\",\\\"refinedContent\\\":\\\"$25\\\",\\\"reporter\\\":\\\"민준구 MK스포츠(kingmjg@maekyung.com)\\\",\\\"title\\\":\\\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\\\",\\\"rawSection\\\":\\\"10777a77f:1077a9000\\\",\\\"sections\\\":[{\\\"firstSection\\\":\\\"107\\\",\\\"firstSectionName\\\":\\\"스포츠\\\",\\\"secondSection\\\":\\\"77a\\\",\\\"secondSectionName\\\":\\\"해외축구\\\",\\\"thirdSection\\\":\\\"77f\\\",\\\"thirdSectionName\\\":\\\"챔스\\\"},{\\\"firstSection\\\":\\\"107\\\",\\\"firstSectionName\\\":\\\"스포츠\\\",\\\"secondSection\\\":\\\"7a9\\\",\\\"secondSectionName\\\":\\\"자동분류\\\",\\\"thirdSection\\\":\\\"000\\\",\\\"thirdSectionName\\\":\\\"섹션없음\\\"}],\\\"officeOutlinkNews\\\":[{\\\"officeId\\\":\\\"410\\\",\\\"hashId\\\":\\\"fcfd1fbd88737263\\\",\\\"title\\\":\\\"\\\\\\\"씨스타 소유, 미국 항공기 만취 탑승\\\\\\\" 주장\\\",\\\"url\\\":\\\"https://www.mk.co.kr/article/11445915?utm_source=naver\\u0026utm_medium=link\\u0026utm_campaign=relatednews\\\"},{\\\"officeId\\\":\\\"410\\\",\\\"hashId\\\":\\\"a379acde5c61cfe2\\\",\\\"title\\\":\\\"박진주 11월30일 비연예인 남편과 결혼 발표\\\",\\\"url\\\":\\\"https://www.mk.co.kr/article/11445707?utm_source=naver\\u0026utm_medium=link\\u0026utm_campaign=relatednews\\\"},{\\\"officeId\\\":\\\"410\\\",\\\"hashId\\\":\\\"a457f0559992700b\\\",\\\"title\\\":\\\"아이브 장원영, 시선집중되는 로맨틱한 파티 여신\\\",\\\"url\\\":\\\"https://www.mk.co.kr/article/11437426?utm_source=naver\\u0026utm_medium=link\\u0026utm_campaign=relatednews\\\"},{\\\"officeId\\\":\\\"410\\\",\\\"hashId\\\":\\\"5aecd7cefee04cf2\\\",\\\"title\\\":\\\"섹시 핫바디 홍지윤 밀착 레깅스\\u0026래시가드 자태\\\",\\\"url\\\":\\\"https://www.mk.co.kr/article/11437001?utm_source=naver\\u0026utm_medium=link\\u0026utm_campaign=relatednews\\\"},{\\\"officeId\\\":\\\"410\\\",\\\"hashId\\\":\\\"69340e9477360dec\\\",\\\"title\\\":\\\"두산 김원형 감독 선임…한국시리즈 우승지도 경력\\\",\\\"url\\\":\\\"https://www.mk.co.kr/article/11446654?utm_source=naver\\u0026utm_medium=link\\u0026utm_campaign=relatednews\\\"}],\\\"imageFiles\\\":[{\\\"url\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\\\",\\\"path\\\":\\\"410/2025/10/22\\\",\\\"name\\\":\\\"0001095217_001_20251022064018740.jpg\\\",\\\"size\\\":\\\"379432\\\",\\\"width\\\":\\\"640\\\",\\\"height\\\":\\\"960\\\",\\\"caption\\\":\\\" ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스\\\"},{\\\"url\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_002_20251022064018793.jpg\\\",\\\"path\\\":\\\"410/2025/10/22\\\",\\\"name\\\":\\\"0001095217_002_20251022064018793.jpg\\\",\\\"size\\\":\\\"170463\\\",\\\"width\\\":\\\"640\\\",\\\"height\\\":\\\"427\\\",\\\"caption\\\":\\\" 자바르니의 퇴장은 PSG에 있어 위기였다. 그러나 오히려 각성한 PSG는 레버쿠젠 원정서 골 잔치를 펼쳤다. 사진=EPA=연합뉴스\\\"},{\\\"url\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_003_20251022064018829.jpg\\\",\\\"path\\\":\\\"410/2025/10/22\\\",\\\"name\\\":\\\"0001095217_003_20251022064018829.jpg\\\",\\\"size\\\":\\\"157807\\\",\\\"width\\\":\\\"640\\\",\\\"height\\\":\\\"428\\\",\\\"caption\\\":\\\" 두에는 신들린 골 감각을 선보이며 PSG의 대승을 이끌었다. 사진=AFP=연합뉴스\\\"},{\\\"url\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_004_20251022064018865.jpg\\\",\\\"path\\\":\\\"410/2025/10/22\\\",\\\"name\\\":\\\"0001095217_004_20251022064018865.jpg\\\",\\\"size\\\":\\\"183746\\\",\\\"width\\\":\\\"640\\\",\\\"height\\\":\\\"427\\\",\\\"caption\\\":\\\" 뎀벨레와 바르콜라는 멋진 득점을 합작했다. 사진=AFP=연합뉴스\\\"}],\\\"mainExposed\\\":false,\\\"promotions\\\":[{\\\"title\\\":\\\"케이탑스타 오픈…안성훈·박지현·진해성·오유진 축하 영상\\\",\\\"url\\\":\\\"https://ktopstar.net\\\",\\\"qrCode\\\":\\\"N\\\"},{\\\"title\\\":\\\"지예은 활동 중단 2개월 만에 ‘런닝맨’ 복귀\\\",\\\"url\\\":\\\"https://mksports.co.kr/news/entertain/11446048\\\",\\\"qrCode\\\":\\\"N\\\"}],\\\"orgUrl\\\":{\\\"pc\\\":{\\\"url\\\":\\\"https://www.mk.co.kr/article/11447762\\\",\\\"uniqueHashCode\\\":\\\"b4839a12d25f6dae\\\"},\\\"mobile\\\":{\\\"url\\\":\\\"\\\",\\\"uniqueHashCode\\\":\\\"\\\"}},\\\"modifyDatetime\\\":\\\"2025-10-22 06:40:18\\\",\\\"serviceDatetime\\\":\\\"2025-10-22 06:38:11\\\"},\\\"journalistCards\\\":{\\\"feedChannelName\\\":\\\"JOURNALIST\\\",\\\"officeLogo\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2025/07/10/logo_410_101_20250710182041.png\\\",\\\"darkOfficeLogo\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2025/07/10/dark_logo_410_101_20250710182041.png\\\",\\\"cards\\\":[{\\\"type\\\":\\\"UNIFORM_CARD\\\",\\\"name\\\":\\\"민준구 MK스포츠\\\",\\\"email\\\":\\\"kingmjg@maekyung.com\\\"},{\\\"journalistId\\\":\\\"77697\\\",\\\"feedChannelKey\\\":\\\"JOURNALIST_77697\\\",\\\"type\\\":\\\"JOURNALIST_CARD\\\",\\\"name\\\":\\\"민준구\\\",\\\"email\\\":\\\"kingmjg@maekyung.com\\\",\\\"imageUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/spubs/2FG0000410/profile/2023/11/20/profile_155045782.png\\\",\\\"comment\\\":\\\"\\\",\\\"isJournalistTalkOn\\\":false,\\\"isJournalistTalkUpdated\\\":false,\\\"journalistTalkPageUrl\\\":\\\"https://media.naver.com/journalist/talk/410/77697\\\",\\\"articles\\\":[{\\\"officeId\\\":\\\"410\\\",\\\"articleId\\\":\\\"0001095208\\\",\\\"title\\\":\\\"‘너 X약 한 거 아니지?’ 할러웨이도 깜짝 놀란 ‘재앙’ 실바의 ‘황당’ 백악관 콜아웃…“로페스한테 어떻게 박살 났는지 못 봤나” [UFC]\\\",\\\"sectionId\\\":\\\"107\\\"},{\\\"officeId\\\":\\\"410\\\",\\\"articleId\\\":\\\"0001094830\\\",\\\"title\\\":\\\"‘멍청한 놈, 포기했네’ 4R ‘항복 선언’ 더 리더, 역대급 조롱의 연속…‘미들급 챔피언’ 치마에프도 격렬한 비난 [UFC]\\\",\\\"sectionId\\\":\\\"107\\\"}]}],\\\"bylines\\\":[\\\"민준구 MK스포츠(kingmjg@maekyung.com)\\\"]},\\\"provideSummaryBot\\\":true,\\\"statement\\\":false,\\\"additionalInfo\\\":{\\\"site\\\":false},\\\"copyright\\\":\\\"Copyright ⓒ MK스포츠 . All rights reserved. 무단 전재 및 재배포 금지.\\\",\\\"channelPick\\\":false,\\\"specialReportPick\\\":false},\\\"series\\\":{\\\"seriesInfo\\\":{\\\"id\\\":4412809,\\\"subscriberCount\\\":249,\\\"title\\\":\\\"유럽축구 한국인 빅리거\\\"},\\\"packItemContents\\\":null,\\\"siblingItemContents\\\":[{\\\"content\\\":null,\\\"contentId\\\":\\\"0001095217\\\",\\\"contentPackId\\\":4412809,\\\"contentPackType\\\":\\\"SERIES\\\",\\\"contentType\\\":\\\"ARTICLE\\\",\\\"createdDate\\\":\\\"2025-10-21T22:20:10.853+00:00\\\",\\\"datetime\\\":\\\"2025-10-21T21:38:11.000+00:00\\\",\\\"extra\\\":null,\\\"gdid\\\":\\\"88127054_000000000000000001095217\\\",\\\"groupId\\\":\\\"410\\\",\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\\\",\\\"images\\\":[{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_002_20251022064018793.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_003_20251022064018829.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_004_20251022064018865.jpg\\\"}],\\\"lastModifiedDate\\\":\\\"2025-10-21T22:20:11.258+00:00\\\",\\\"linkUrl\\\":\\\"https://m.sports.naver.com/wfootball/article/410/0001095217?type=series\\u0026cid=4412809\\\",\\\"modifiedDatetime\\\":\\\"2025-10-21T21:40:18.000+00:00\\\",\\\"orgUrl\\\":{\\\"mobile\\\":\\\"\\\",\\\"pc\\\":\\\"https://www.mk.co.kr/article/11447762\\\"},\\\"repSection\\\":\\\"107\\\",\\\"section\\\":\\\"10777a77f:1077a9000\\\",\\\"subContent\\\":\\\"‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다.PSG는 22일(한국시간) 독일 레버쿠젠이 바이 아레나에서 열린 레버쿠젠과의 2025-26 UEFA 챔피언스리그 리그 페이즈 3라운드 원정 경기에서 7-2로 대승, 3연승을 달렸다.PSG는 무려 7...\\\",\\\"subTitle\\\":null,\\\"thumbnailAnalysisMeta\\\":{\\\"dominantColor\\\":\\\"#643e3a\\\",\\\"originSimilarity\\\":\\\"54\\\",\\\"seriesSimilarity\\\":\\\"63\\\"},\\\"title\\\":\\\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\\\",\\\"type\\\":\\\"1\\\",\\\"videos\\\":[]},{\\\"content\\\":null,\\\"contentId\\\":\\\"0001094484\\\",\\\"contentPackId\\\":4412809,\\\"contentPackType\\\":\\\"SERIES\\\",\\\"contentType\\\":\\\"ARTICLE\\\",\\\"createdDate\\\":\\\"2025-10-18T02:05:22.362+00:00\\\",\\\"datetime\\\":\\\"2025-10-17T22:40:11.000+00:00\\\",\\\"extra\\\":null,\\\"gdid\\\":\\\"88127054_000000000000000001094484\\\",\\\"groupId\\\":\\\"410\\\",\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_001_20251018074011754.png\\\",\\\"images\\\":[{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_001_20251018074011754.png\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_002_20251018074011843.png\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_003_20251018074011894.png\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_004_20251018074011956.png\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_005_20251018074012021.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/18/0001094484_006_20251018074012068.png\\\"}],\\\"lastModifiedDate\\\":\\\"2025-10-18T02:05:22.948+00:00\\\",\\\"linkUrl\\\":\\\"https://m.sports.naver.com/kfootball/article/410/0001094484?type=series\\u0026cid=4412809\\\",\\\"modifiedDatetime\\\":\\\"2025-10-17T22:40:11.000+00:00\\\",\\\"orgUrl\\\":{\\\"mobile\\\":\\\"\\\",\\\"pc\\\":\\\"https://www.mk.co.kr/article/11444700\\\"},\\\"repSection\\\":\\\"107\\\",\\\"section\\\":\\\"107787789:1077a9000\\\",\\\"subContent\\\":\\\"한국축구의 경사다. 이강인이 아시아축구연맹(AFC)이 선정하는 2025 AFC 올해의 국제선수상의 주인공이 됐다.AFC 시상식은 17일(한국시간) 사우디아라비아 리야드의 킹 파하드 문화센터에서 열렸다. 이강인은 메흐디 타레미(이란·인터밀란), 구보 다케후사(일본·레알 소시에다드)와 함께 올해의 국제선수상 후보에 올라 수상...\\\",\\\"subTitle\\\":null,\\\"thumbnailAnalysisMeta\\\":{\\\"dominantColor\\\":\\\"#182c4d\\\",\\\"originSimilarity\\\":\\\"61\\\",\\\"seriesSimilarity\\\":\\\"79\\\"},\\\"title\\\":\\\"韓 축구 경사! ‘유럽 쿼드러플’ 이강인, AFC 국제선수상 수상 영예…손흥민·김민재 이어 4연속 한국이 주인공\\\",\\\"type\\\":\\\"1\\\",\\\"videos\\\":[]},{\\\"content\\\":null,\\\"contentId\\\":\\\"0001094340\\\",\\\"contentPackId\\\":4412809,\\\"contentPackType\\\":\\\"SERIES\\\",\\\"contentType\\\":\\\"ARTICLE\\\",\\\"createdDate\\\":\\\"2025-10-17T00:43:02.989+00:00\\\",\\\"datetime\\\":\\\"2025-10-16T20:25:11.000+00:00\\\",\\\"extra\\\":null,\\\"gdid\\\":\\\"88127054_000000000000000001094340\\\",\\\"groupId\\\":\\\"410\\\",\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_001_20251017053006389.jpg\\\",\\\"images\\\":[{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_001_20251017053006389.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_002_20251017053006444.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_003_20251017053006488.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_004_20251017053006537.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_005_20251017053006588.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_006_20251017053006622.jpg\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_007_20251017053006659.png\\\"},{\\\"imageUrl\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/17/0001094340_008_20251017053006745.jpg\\\"}],\\\"lastModifiedDate\\\":\\\"2025-10-17T00:43:03.466+00:00\\\",\\\"linkUrl\\\":\\\"https://m.sports.naver.com/kfootball/article/410/0001094340?type=series\\u0026cid=4412809\\\",\\\"modifiedDatetime\\\":\\\"2025-10-16T20:30:06.000+00:00\\\",\\\"orgUrl\\\":{\\\"mobile\\\":\\\"\\\",\\\"pc\\\":\\\"https://www.mk.co.kr/article/11443777\\\"},\\\"repSection\\\":\\\"107\\\",\\\"section\\\":\\\"107787789:1077a9000\\\",\\\"subContent\\\":\\\"이강인(24·파리 생제르맹)이 아시아축구연맹(AFC) 올해의 국제선수상을 받았다. 이강인이 아시아 밖에서 뛰는 아시아 선수 중 올해 최고의 활약을 펼친 선수로 인정받은 것이다.이강인은 10월 17일(한국시간) 사우디아라비아 리야드의 킹 파하드 문화센터에서 열린 ‘AFC 어워즈 2025’에서 ‘올해의 국제선수상’ 수상자로...\\\",\\\"subTitle\\\":null,\\\"thumbnailAnalysisMeta\\\":{\\\"dominantColor\\\":\\\"#605551\\\",\\\"originSimilarity\\\":\\\"60\\\",\\\"seriesSimilarity\\\":\\\"61\\\"},\\\"title\\\":\\\"손흥민·김민재 이어 한국인 3번째 수상! 이강인, AFC 올해의 국제선수상 받았다···‘일본 쿠보, 이란 타레미 제쳤다’\\\",\\\"type\\\":\\\"1\\\",\\\"videos\\\":[]}]},\\\"officeInfo\\\":{\\\"officeId\\\":\\\"410\\\",\\\"ename\\\":\\\"mksports\\\",\\\"hname\\\":\\\"MK스포츠 \\\",\\\"hnameShort\\\":\\\"MK스포츠 \\\",\\\"url\\\":\\\"https://mksports.co.kr/\\\",\\\"logo\\\":\\\"\\\",\\\"search\\\":\\\"Y\\\",\\\"searchExposeType\\\":\\\"expose\\\",\\\"searchDay\\\":\\\"0\\\",\\\"categoryId\\\":\\\"6\\\",\\\"categoryName\\\":\\\"스포츠/연예\\\",\\\"status\\\":\\\"0\\\",\\\"mobile\\\":\\\"1\\\",\\\"paperOfficeYn\\\":\\\"N\\\",\\\"serviceYn\\\":\\\"Y\\\",\\\"detailSearchYn\\\":\\\"Y\\\",\\\"specialCase\\\":\\\"0\\\",\\\"pcSearchStartDate\\\":\\\"2012-06-14\\\",\\\"mobileSearchStartDate\\\":\\\"2012-06-14\\\",\\\"tabSearchYn\\\":\\\"Y\\\",\\\"articleExposeYn\\\":\\\"Y\\\",\\\"naverTvChannelId\\\":\\\"\\\",\\\"phoneNumberSubscribe\\\":\\\"\\\",\\\"urlSubscribe\\\":\\\"\\\",\\\"broadcastYn\\\":\\\"N\\\",\\\"pressHomeYn\\\":\\\"Y\\\",\\\"logos\\\":[{\\\"typeId\\\":6,\\\"imgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2020/07/28/logo_410_6_20200728205054.png\\\",\\\"darkImgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2020/09/15/dark_logo_410_6_20200915195205.png\\\"},{\\\"typeId\\\":18,\\\"imgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2017/08/29/logo_410_18_20170829161729.jpg\\\"},{\\\"typeId\\\":57,\\\"imgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2023/07/21/logo_410_57_20230721211755.jpg\\\"},{\\\"typeId\\\":100,\\\"imgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2025/07/10/logo_410_100_20250710182041.jpg\\\"},{\\\"typeId\\\":101,\\\"imgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2025/07/10/logo_410_101_20250710182041.png\\\",\\\"darkImgUrl\\\":\\\"https://mimgnews.pstatic.net/image/upload/office_logo/410/2025/07/10/dark_logo_410_101_20250710182041.png\\\"}]},\\\"namedEntityList\\\":[],\\\"isAvailableNamedEntity\\\":true}},\\\"dataUpdateCount\\\":1,\\\"dataUpdatedAt\\\":1761116031643,\\\"error\\\":null,\\\"errorUpdateCount\\\":0,\\\"errorUpdatedAt\\\":0,\\\"fetchFailureCount\\\":0,\\\"fetchFailureReason\\\":null,\\\"fetchMeta\\\":null,\\\"isInvalidated\\\":false,\\\"status\\\":\\\"success\\\",\\\"fetchStatus\\\":\\\"idle\\\"},\\\"queryKey\\\":[\\\"article\\\",\\\"news\\\",{\\\"oid\\\":\\\"410\\\",\\\"aid\\\":\\\"0001095217\\\",\\\"cid\\\":\\\"$undefined\\\"}],\\\"queryHash\\\":\\\"[\\\\\\\"article\\\\\\\",\\\\\\\"news\\\\\\\",{\\\\\\\"aid\\\\\\\":\\\\\\\"0001095217\\\\\\\",\\\\\\\"oid\\\\\\\":\\\\\\\"410\\\\\\\"}]\\\"}]},\\\"children\\\":[\\\"$\\\",\\\"div\\\",null,{\\\"id\\\":\\\"wrap\\\",\\\"children\\\":[\\\"$\\\",\\\"$L26\\\",null,{}]}]}]\\n\"])</script><script>self.__next_f.push([1,\"20:[[\\\"$\\\",\\\"meta\\\",\\\"0\\\",{\\\"name\\\":\\\"viewport\\\",\\\"content\\\":\\\"width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"1\\\",{\\\"charSet\\\":\\\"utf-8\\\"}],[\\\"$\\\",\\\"title\\\",\\\"2\\\",{\\\"children\\\":\\\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\\\"}],[\\\"$\\\",\\\"link\\\",\\\"3\\\",{\\\"rel\\\":\\\"manifest\\\",\\\"href\\\":\\\"/manifest.json\\\",\\\"crossOrigin\\\":\\\"use-credentials\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"4\\\",{\\\"name\\\":\\\"napp-site-analysis\\\",\\\"content\\\":\\\"gdid=88127054_000000000000000001095217,service=sports,collection=news,section=107\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"5\\\",{\\\"property\\\":\\\"og:title\\\",\\\"content\\\":\\\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"6\\\",{\\\"property\\\":\\\"og:image\\\",\\\"content\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"7\\\",{\\\"property\\\":\\\"og:image:path\\\",\\\"content\\\":\\\"410/2025/10/22\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"8\\\",{\\\"property\\\":\\\"og:image:name\\\",\\\"content\\\":\\\"0001095217_001_20251022064018740.jpg\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"9\\\",{\\\"property\\\":\\\"og:image:size\\\",\\\"content\\\":\\\"379432\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"10\\\",{\\\"property\\\":\\\"og:image:width\\\",\\\"content\\\":\\\"640\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"11\\\",{\\\"property\\\":\\\"og:image:height\\\",\\\"content\\\":\\\"960\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"12\\\",{\\\"property\\\":\\\"og:image:caption\\\",\\\"content\\\":\\\" ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"13\\\",{\\\"property\\\":\\\"og:type\\\",\\\"content\\\":\\\"article\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"14\\\",{\\\"name\\\":\\\"twitter:card\\\",\\\"content\\\":\\\"summary_large_image\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"15\\\",{\\\"name\\\":\\\"twitter:title\\\",\\\"content\\\":\\\"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"16\\\",{\\\"name\\\":\\\"twitter:image\\\",\\\"content\\\":\\\"https://imgnews.pstatic.net/image/410/2025/10/22/0001095217_001_20251022064018740.jpg\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"17\\\",{\\\"name\\\":\\\"twitter:image:path\\\",\\\"content\\\":\\\"410/2025/10/22\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"18\\\",{\\\"name\\\":\\\"twitter:image:name\\\",\\\"content\\\":\\\"0001095217_001_20251022064018740.jpg\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"19\\\",{\\\"name\\\":\\\"twitter:image:size\\\",\\\"content\\\":\\\"379432\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"20\\\",{\\\"name\\\":\\\"twitter:image:width\\\",\\\"content\\\":\\\"640\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"21\\\",{\\\"name\\\":\\\"twitter:image:height\\\",\\\"content\\\":\\\"960\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"22\\\",{\\\"name\\\":\\\"twitter:image:caption\\\",\\\"content\\\":\\\" ‘발롱도르 위너’ 뎀벨레가 돌아온 파리생제르망(PSG)이 무려 7골을 집중, 바이어 04 레버쿠젠 원정을 대승으로 마무리했다. 사진=AFP=연합뉴스\\\"}],[\\\"$\\\",\\\"link\\\",\\\"23\\\",{\\\"rel\\\":\\\"shortcut icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_32.png\\\",\\\"sizes\\\":\\\"32x32\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"24\\\",{\\\"rel\\\":\\\"icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_32.png\\\",\\\"sizes\\\":\\\"32x32\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"25\\\",{\\\"rel\\\":\\\"apple-touch-icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_57.png\\\",\\\"sizes\\\":\\\"57x57\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"26\\\",{\\\"rel\\\":\\\"apple-touch-icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_76.png\\\",\\\"sizes\\\":\\\"76x76\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"27\\\",{\\\"rel\\\":\\\"apple-touch-icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_120.png\\\",\\\"sizes\\\":\\\"120x120\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"28\\\",{\\\"rel\\\":\\\"apple-touch-icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_152.png\\\",\\\"sizes\\\":\\\"152x152\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"29\\\",{\\\"rel\\\":\\\"apple-touch-icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_167.png\\\",\\\"sizes\\\":\\\"167x167\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"link\\\",\\\"30\\\",{\\\"rel\\\":\\\"apple-touch-icon\\\",\\\"href\\\":\\\"https://ssl.pstatic.net/static/sports/common/2025/Favicon_180.png\\\",\\\"sizes\\\":\\\"180x180\\\",\\\"type\\\":\\\"image/png\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"31\\\",{\\\"name\\\":\\\"next-size-adjust\\\"}]]\\n\"])</script><script>self.__next_f.push([1,\"12:null\\n\"])</script></body></html>"
+        }
+      }
+    ],
+    "Edit Fields": [
+      {
+        "json": {
+          "date": "2025-10-22T15:54:33.459+09:00",
+          "URI": "https://m.sports.naver.com/wfootball/article/410/0001095217",
+          "key_value": "2025-10-22T15:54:33.459+09:00https://m.sports.naver.com/wfootball/article/410/0001095217"
+        }
+      }
+    ],
+    "Append row in sheet": [
+      {
+        "json": {
+          "key_value": "2025-10-22T15:54:33.459+09:00https://m.sports.naver.com/wfootball/article/410/0001095217",
+          "URI": "https://m.sports.naver.com/wfootball/article/410/0001095217",
+          "date": "2025-10-22T15:54:33.459+09:00"
+        }
+      }
+    ],
+    "Message a model": [
+      {
+        "json": {
+          "content": {
+            "parts": [
+              {
+                "text": "{\n  \"기사 제목\": \"‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]\",\n  \"100자내외 요약\": \"파리 생제르망(PSG)이 레버쿠젠 원정에서 뎀벨레의 활약과 이강인의 교체 출전 속에 퇴장 혈전 끝에 7-2 대승을 거두며 챔피언스리그 3연승을 기록했다.\",\n  \"한줄평\": \"뎀벨레의 발롱도르 축포와 PSG의 폭발적인 공격력이 돋보인 난타전, 이강인도 승리에 기여!\"\n}"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      }
+    ],
+    "Edit Fields1": [
+      {
+        "json": {
+          "text": {
+            "기사 제목": "‘골골골골골골골’ 뎀벨레 발롱도르 축포! PSG, 레버쿠젠 원정서 ‘퇴장 혈전’ 끝 7-2 대승…‘교체’ 이강인 27분 소화 [챔피언스리그]",
+            "100자내외 요약": "파리 생제르망(PSG)이 레버쿠젠 원정에서 뎀벨레의 활약과 이강인의 교체 출전 속에 퇴장 혈전 끝에 7-2 대승을 거두며 챔피언스리그 3연승을 기록했다.",
+            "한줄평": "뎀벨레의 발롱도르 축포와 PSG의 폭발적인 공격력이 돋보인 난타전, 이강인도 승리에 기여!"
+          }
+        }
+      }
+    ],
+    "Update row in sheet": [
+      {
+        "json": {
+          "기사요약": "파리 생제르망(PSG)이 레버쿠젠 원정에서 뎀벨레의 활약과 이강인의 교체 출전 속에 퇴장 혈전 끝에 7-2 대승을 거두며 챔피언스리그 3연승을 기록했다.",
+          "한줄평": "뎀벨레의 발롱도르 축포와 PSG의 폭발적인 공격력이 돋보인 난타전, 이강인도 승리에 기여!",
+          "key_value": "2025-10-22T15:54:33.459+09:00https://m.sports.naver.com/wfootball/article/410/0001095217"
+        }
+      }
+    ],
+    "Get row(s) in sheet": [
+      {
+        "json": {
+          "row_number": 2,
+          "이름": "오상훈",
+          "My computer ip": "192.168.0.179",
+          "n8n cloude": "https://mahaumaster.app.n8n.cloud/",
+          "slack ID": "otter.oh@gmail.com",
+          "google Email": "otter.oh@gmail.com",
+          "https://github.com/ ID": "https://github.com/yojulab"
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "이름": "이금락",
+          "My computer ip": "192.168.0.213",
+          "n8n cloude": "https://windows2xp69.app.n8n.cloud",
+          "slack ID": "windows2xp69@gmail.com",
+          "google Email": "windows2xp69@gmail.com",
+          "https://github.com/ ID": "https://github.com/scottlee-max"
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "이름": "박영후",
+          "My computer ip": "192.168.0.145",
+          "n8n cloude": "https://dudgn7715.app.n8n.cloud/",
+          "slack ID": "dudgn7715@gmail.com",
+          "google Email": "dudgn7715@gmail.com",
+          "https://github.com/ ID": "https://github.com/ParkYounghu"
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "이름": "오채언",
+          "My computer ip": "192.168.0.86",
+          "n8n cloude": "",
+          "slack ID": "t1acjscat@gmail.com",
+          "google Email": "t1acjscat@gmail.com",
+          "https://github.com/ ID": "https://github.com/t1acjscat-oc"
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "이름": "오수현",
+          "My computer ip": "192.168.0.95",
+          "n8n cloude": "https://helena513.app.n8n.cloud/",
+          "slack ID": "ohsue568@gmail.com",
+          "google Email": "ohsue568@gmail.com",
+          "https://github.com/ ID": "second.prompts.md"
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "이름": "이상로",
+          "My computer ip": "192.168.0.39",
+          "n8n cloude": "https://citylovelee1113.app.n8n.cloud/",
+          "slack ID": "kimtiger459@gmail.com",
+          "google Email": "kimtiger459@gmail.com",
+          "https://github.com/ ID": "https://github.com/kimtiger459-commits"
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "이름": "정한솔",
+          "My computer ip": "192.168.0.143",
+          "n8n cloude": "https://eluu100004.app.n8n.cloud",
+          "slack ID": "eluu100004@gmail.com",
+          "google Email": "eluu100004@gmail.com",
+          "https://github.com/ ID": "https://github.com/Hansol1004"
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "이름": "유재랑",
+          "My computer ip": "192.168.0.112",
+          "n8n cloude": "https://jaerang.app.n8n.cloud/",
+          "slack ID": "jaerang0611@gmail.com",
+          "google Email": "jaerang0611@gmail.com",
+          "https://github.com/ ID": "https://github.com/jaerang0611"
+        }
+      },
+      {
+        "json": {
+          "row_number": 10,
+          "이름": "최현미",
+          "My computer ip": "192.168.0.20",
+          "n8n cloude": "",
+          "slack ID": "267nuku@gmail.com",
+          "google Email": "267nuku@gmail.com",
+          "https://github.com/ ID": "https://github.com/267nuku"
+        }
+      },
+      {
+        "json": {
+          "row_number": 11,
+          "이름": "장근선",
+          "My computer ip": "192.168.0.55",
+          "n8n cloude": "https://jkkachi.app.n8n.cloud/",
+          "slack ID": "jkkachi@gmail.com",
+          "google Email": "jkkachi@gmail.com",
+          "https://github.com/ ID": "https://github.com/jks700"
+        }
+      },
+      {
+        "json": {
+          "row_number": 12,
+          "이름": "이율비",
+          "My computer ip": "192.168.0.69",
+          "n8n cloude": "https://leeyulbi.app.n8n.cloud/",
+          "slack ID": "egoism030400@gmail.com",
+          "google Email": "egoism030400@gmail.com",
+          "https://github.com/ ID": "https://github.com/leeyulbi"
+        }
+      },
+      {
+        "json": {
+          "row_number": 13,
+          "이름": "황선영",
+          "My computer ip": "192.168.0.75",
+          "n8n cloude": "https://canimary123.app.n8n.cloud/",
+          "slack ID": "canimary123@gmail.com",
+          "google Email": "canimary123@gmail.com",
+          "https://github.com/ ID": "https://github.com/canimary123"
+        }
+      },
+      {
+        "json": {
+          "row_number": 14,
+          "이름": "정환석",
+          "My computer ip": "192.168.0.19",
+          "n8n cloude": "https://futureleadet.app.n8n.cloud/",
+          "slack ID": "futureleader@gmail.com",
+          "google Email": "futureleadet@gmail.com",
+          "https://github.com/ ID": "https://github.com/futureleadet"
+        }
+      },
+      {
+        "json": {
+          "row_number": 15,
+          "이름": "황병익",
+          "My computer ip": "192.168.0.141",
+          "n8n cloude": "https://hwangbyoungik.",
+          "slack ID": "byoungikhwang@gmail.com",
+          "google Email": "byoungikhwang@gmail.com",
+          "https://github.com/ ID": "https://github.com/byoungikhwang"
+        }
+      },
+      {
+        "json": {
+          "row_number": 16,
+          "이름": "김찬영",
+          "My computer ip": "192.168.0.80",
+          "n8n cloude": "https://rlacksdud1114.app.n8n.cloud/",
+          "slack ID": "rlacksdud1114@gmail.com",
+          "google Email": "rlacksdud1114@gmail.com",
+          "https://github.com/ ID": "https://github.com/rlacksdud1114-ship-it"
+        }
+      },
+      {
+        "json": {
+          "row_number": 17,
+          "이름": "김진현",
+          "My computer ip": "192.168.0.91",
+          "n8n cloude": "https://jinh2kakao.app.n8n.cloud/",
+          "slack ID": "jinh2kakao@gmail.com",
+          "google Email": "jinh2kakao@gmail.com",
+          "https://github.com/ ID": "https://github.com/jinh2kakao"
+        }
+      },
+      {
+        "json": {
+          "row_number": 18,
+          "이름": "정상민",
+          "My computer ip": "192.168.0.65",
+          "n8n cloude": "https://learnbook1103.app.n8n.cloud/",
+          "slack ID": "learnbook1103@gmail.com",
+          "google Email": "learnbook1103@gmail.com",
+          "https://github.com/ ID": "https://github.com/learnbook1103-design"
+        }
+      },
+      {
+        "json": {
+          "row_number": 19,
+          "이름": "이용기",
+          "My computer ip": "192.168.0.56",
+          "n8n cloude": "https://yoyoyy2025.app.n8n.cloud/",
+          "slack ID": "yoyoyy2025@gmail.com",
+          "google Email": "yoyoyy2025@gmail.com",
+          "https://github.com/ ID": "https://github.com/yoyoyy2025-byte"
+        }
+      },
+      {
+        "json": {
+          "row_number": 20,
+          "이름": "박지호",
+          "My computer ip": "192.168.0.49",
+          "n8n cloude": "https://ssadda291.app.n8n.cloud/",
+          "slack ID": "parkjiho7111@gmail.com",
+          "google Email": "parkjiho7111@gmail.com",
+          "https://github.com/ ID": "https://github.com/parkjiho7111"
+        }
+      },
+      {
+        "json": {
+          "row_number": 21,
+          "이름": "조성익",
+          "My computer ip": "",
+          "n8n cloude": "",
+          "slack ID": "dkdlfls0809@gmail.com",
+          "google Email": "parkjiho7111@gmail.com",
+          "https://github.com/ ID": "https://github.com/dkdlfls0809"
+        }
+      },
+      {
+        "json": {
+          "row_number": 22,
+          "이름": "오황욱",
+          "My computer ip": "192.168.0.68",
+          "n8n cloude": "https://hankoh.app.n8n.cloud",
+          "slack ID": "aittokbaro90@gmail.com",
+          "google Email": "aittokbaro90@gmail.com",
+          "https://github.com/ ID": "https://github.com/hank7345"
+        }
+      },
+      {
+        "json": {
+          "row_number": 23,
+          "이름": "김수영",
+          "My computer ip": "192.168.0.140",
+          "n8n cloude": "https://lydia72.app.n8n.cloud/",
+          "slack ID": "kimlydia72@gmail.com",
+          "google Email": "kimlydia72@gmail.com",
+          "https://github.com/ ID": "https://github.com/kimlydia72-spec"
+        }
+      },
+      {
+        "json": {
+          "row_number": 24,
+          "이름": "정다인",
+          "My computer ip": "192.168.0.62",
+          "n8n cloude": "https://dayin9905.app.n8n.cloud/",
+          "slack ID": "kimlydia72@gmail.com",
+          "google Email": "dayin.9905@gmail.com",
+          "https://github.com/ ID": "https://github.com/dayin-905"
+        }
+      },
+      {
+        "json": {
+          "row_number": 25,
+          "이름": "김찬호",
+          "My computer ip": "192.168.0.142",
+          "n8n cloude": "https://youthcoolmusma.app.n8n.cloud/",
+          "slack ID": "youth.cool.musma@gmail.com",
+          "google Email": "youth.cool.musma@gmail.com",
+          "https://github.com/ ID": "https://github.com/coolmusma"
+        }
+      },
+      {
+        "json": {
+          "row_number": 26,
+          "이름": "황지상",
+          "My computer ip": "192.168.0.144",
+          "n8n cloude": "https://gregchris07258305.app.n8n.cloud/",
+          "slack ID": "gregchris07258305@gmail.com",
+          "google Email": "gregchris07258305@gmail.com",
+          "https://github.com/ ID": "https://github.com/gregchris07258305-lang"
+        }
+      },
+      {
+        "json": {
+          "row_number": 27,
+          "이름": "이예진",
+          "My computer ip": "",
+          "n8n cloude": "",
+          "slack ID": "lyj000216@gmail.com",
+          "google Email": "lyj000216@gmail.com",
+          "https://github.com/ ID": "https://github.com/oyeoyj"
+        }
+      },
+      {
+        "json": {
+          "row_number": 28,
+          "이름": "윤태영",
+          "My computer ip": "",
+          "n8n cloude": "",
+          "slack ID": "nwood3124@gmail.com",
+          "google Email": "nwood3124@gmail.com",
+          "https://github.com/ ID": "https://github.com/nwood3124"
+        }
+      },
+      {
+        "json": {
+          "row_number": 29,
+          "이름": "",
+          "My computer ip": "",
+          "n8n cloude": "",
+          "slack ID": "https://join.slack.com/t/ai-06t9512/shared_invite/zt-3d0o3ioae-RiXK7_8IXawlu5ow2PVfFA",
+          "google Email": "nwood3124@gmail.com",
+          "https://github.com/ ID": ""
+        }
+      },
+      {
+        "json": {
+          "row_number": 30,
+          "이름": "이승주",
+          "My computer ip": "",
+          "n8n cloude": "",
+          "slack ID": "omegaeden0423@gamil.com",
+          "google Email": "nwood3124@gmail.com",
+          "https://github.com/ ID": "https://github.com/omegaeden0423-ux"
+        }
+      }
+    ],
+    "Aggregate": [
+      {
+        "json": {
+          "google Email": [
+            "otter.oh@gmail.com",
+            "windows2xp69@gmail.com",
+            "dudgn7715@gmail.com",
+            "t1acjscat@gmail.com",
+            "ohsue568@gmail.com",
+            "kimtiger459@gmail.com",
+            "eluu100004@gmail.com",
+            "jaerang0611@gmail.com",
+            "267nuku@gmail.com",
+            "jkkachi@gmail.com",
+            "egoism030400@gmail.com",
+            "canimary123@gmail.com",
+            "futureleadet@gmail.com",
+            "byoungikhwang@gmail.com",
+            "rlacksdud1114@gmail.com",
+            "jinh2kakao@gmail.com",
+            "learnbook1103@gmail.com",
+            "yoyoyy2025@gmail.com",
+            "parkjiho7111@gmail.com",
+            "parkjiho7111@gmail.com",
+            "aittokbaro90@gmail.com",
+            "kimlydia72@gmail.com",
+            "dayin.9905@gmail.com",
+            "youth.cool.musma@gmail.com",
+            "gregchris07258305@gmail.com",
+            "lyj000216@gmail.com",
+            "nwood3124@gmail.com",
+            "nwood3124@gmail.com",
+            "nwood3124@gmail.com"
+          ],
+          "이름": [
+            "오상훈",
+            "이금락",
+            "박영후",
+            "오채언",
+            "오수현",
+            "이상로",
+            "정한솔",
+            "유재랑",
+            "최현미",
+            "장근선",
+            "이율비",
+            "황선영",
+            "정환석",
+            "황병익",
+            "김찬영",
+            "김진현",
+            "정상민",
+            "이용기",
+            "박지호",
+            "조성익",
+            "오황욱",
+            "김수영",
+            "정다인",
+            "김찬호",
+            "황지상",
+            "이예진",
+            "윤태영",
+            "",
+            "이승주"
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f4779f67-ce1f-42d6-bfce-ec947c94a74f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5b960426ec04bcbbe5c1e179d15cca807de4b74c76308f11e7227abb0613b73"
+  },
+  "id": "ch80e6CUIAgTe40b",
+  "tags": []
+}
